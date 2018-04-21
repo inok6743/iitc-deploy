@@ -2,11 +2,11 @@
 // @id             iitc-plugin-farms@949
 // @name           IITC plugin: Show farms by level
 // @category       Info
-// @version        1.4.1.20180421.92358
+// @version        1.4.1.20180421.92633
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2018-04-21-092358] Find farms by minimum level.
+// @description    [local-2018-04-21-092633] Find farms by minimum level.
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
@@ -53,7 +53,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'local';
-plugin_info.dateTimeVersion = '20180421.92358';
+plugin_info.dateTimeVersion = '20180421.92633';
 plugin_info.pluginId = 'layer-farms-find';
 //END PLUGIN AUTHORS NOTE
 

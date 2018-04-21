@@ -2,7 +2,7 @@
 // @id             iitc-plugin-periodic-refresh
 // @name           IITC plugin: Periodic refresh
 // @category       Tweaks
-// @version        0.1.0.20180421.92358
+// @version        0.1.0.20180421.92633
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
@@ -26,7 +26,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'local';
-plugin_info.dateTimeVersion = '20180421.92358';
+plugin_info.dateTimeVersion = '20180421.92633';
 plugin_info.pluginId = 'periodic-refresh';
 //END PLUGIN AUTHORS NOTE
 

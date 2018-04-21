@@ -2,11 +2,11 @@
 // @id             iitc-plugin-basemap-mapquest-open-aerial@jonatkins
 // @name           IITC plugin: MapQuest Open Satellite view (US Only)
 // @category       Map Tiles
-// @version        0.1.1.20180421.91815
+// @version        0.1.1.20180421.92633
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2018-04-21-091815] Add the MapQuest Open Aerial satellite view tiles as a map layer. High detail in the US (lower 48) only.
+// @description    [local-2018-04-21-092633] Add the MapQuest Open Aerial satellite view tiles as a map layer. High detail in the US (lower 48) only.
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
@@ -26,7 +26,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'local';
-plugin_info.dateTimeVersion = '20180421.91815';
+plugin_info.dateTimeVersion = '20180421.92633';
 plugin_info.pluginId = 'basemap-mapquest-open-aerial';
 //END PLUGIN AUTHORS NOTE
 
