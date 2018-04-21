@@ -2,11 +2,11 @@
 // @id             iitc-plugin-show-less-portals@jonatkins
 // @name           IITC plugin: Show less portals when zoomed out
 // @category       Tweaks
-// @version        0.3.0.20180421.91815
+// @version        0.3.0.20180421.92358
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2018-04-21-091815] Vastly reduce the detail level when zoomed out to level 11 or less (L4+ portals), to significantly reduce data usage when viewing large areas.
+// @description    [local-2018-04-21-092358] Vastly reduce the detail level when zoomed out to level 11 or less (L4+ portals), to significantly reduce data usage when viewing large areas.
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
@@ -26,7 +26,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'local';
-plugin_info.dateTimeVersion = '20180421.91815';
+plugin_info.dateTimeVersion = '20180421.92358';
 plugin_info.pluginId = 'show-less-portals-zoomed-out';
 //END PLUGIN AUTHORS NOTE
 

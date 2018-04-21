@@ -2,7 +2,7 @@
 // @id             iitc-plugin-highlight-portals-with-L8-resonators@superd
 // @name           IITC plugin: highlight portals with L8 resonators
 // @category  Deleted
-// @version        0.1.0.20180421.91815
+// @version        0.1.0.20180421.92358
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none

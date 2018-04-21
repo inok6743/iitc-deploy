@@ -2,7 +2,7 @@
 // @id             iitc-plugin-highlight-bad-deployment-distance@cathesaurus
 // @name           IITC plugin: highlight badly-deployed portals
 // @category  Deleted
-// @version        0.1.1.20180421.91815
+// @version        0.1.1.20180421.92358
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none

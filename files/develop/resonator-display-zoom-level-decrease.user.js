@@ -2,11 +2,11 @@
 // @id             iitc-plugin-resonator-display-zoom-level-decrease@xelio
 // @name           IITC plugin: resonator display zoom level decrease
 // @category       Deleted
-// @version        1.0.2.20180421.91815
+// @version        1.0.2.20180421.92358
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2018-04-21-091815] Resonator display distance is no longer an option set with a plugin. With the 'draw-resonators' plugin you can now turn on/off resonators in the layer chooser instead.
+// @description    [local-2018-04-21-092358] Resonator display distance is no longer an option set with a plugin. With the 'draw-resonators' plugin you can now turn on/off resonators in the layer chooser instead.
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
