@@ -2,11 +2,11 @@
 // @id             iitc-plugin-sync@xelio
 // @name           IITC plugin: Sync
 // @category       Misc
-// @version        0.2.3.20180419.123209
+// @version        0.2.3.20181030.135241
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2018-04-19-123209] Sync data between clients via Google Realtime API. Only syncs data from specific plugins (currently: Keys, Bookmarks). Sign in via the 'Sync' link.
+// @description    [local-2018-10-30-135241] Sync data between clients via Google Realtime API. Only syncs data from specific plugins (currently: Keys, Bookmarks). Sign in via the 'Sync' link.
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
@@ -26,7 +26,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'local';
-plugin_info.dateTimeVersion = '20180419.123209';
+plugin_info.dateTimeVersion = '20181030.135241';
 plugin_info.pluginId = 'sync';
 //END PLUGIN AUTHORS NOTE
 

@@ -2,11 +2,11 @@
 // @id             iitc-plugin-highlight-portals-my-level@vita10gy
 // @name           IITC plugin: highlight portals by my level
 // @category       Highlighter
-// @version        0.1.2.20180419.123209
+// @version        0.1.2.20181030.135241
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2018-04-19-123209] Use the portal fill color to denote if the portal is either at and above, or at and below your level.
+// @description    [local-2018-10-30-135241] Use the portal fill color to denote if the portal is either at and above, or at and below your level.
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
@@ -26,7 +26,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'local';
-plugin_info.dateTimeVersion = '20180419.123209';
+plugin_info.dateTimeVersion = '20181030.135241';
 plugin_info.pluginId = 'portal-highlighter-portals-my-level';
 //END PLUGIN AUTHORS NOTE
 
