@@ -2,7 +2,7 @@
 // @id             iitc-plugin-highlight-portals-upgrade@vita10gy
 // @name           IITC plugin: highlight portals you can upgrade to a specific level
 // @category  Deleted
-// @version        0.1.0.20180421.92633
+// @version        0.1.0.20181030.115356
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none

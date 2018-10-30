@@ -2,11 +2,11 @@
 // @id             iitc-plugin-minimap@breunigs
 // @name           IITC plugin: Mini map
 // @category       Controls
-// @version        0.2.0.20180421.92633
+// @version        0.2.0.20181030.115356
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2018-04-21-092633] Show a mini map on the corner of the map.
+// @description    [local-2018-10-30-115356] Show a mini map on the corner of the map.
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
@@ -26,7 +26,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'local';
-plugin_info.dateTimeVersion = '20180421.92633';
+plugin_info.dateTimeVersion = '20181030.115356';
 plugin_info.pluginId = 'minimap';
 //END PLUGIN AUTHORS NOTE
 
@@ -295,7 +295,7 @@ L.control.minimap = function (options) {
   var position = isSmartphone() ? 'bottomright' : 'bottomleft';
 
   setTimeout(function() {
-    new L.Control.MiniMap(L.gridLayer.googleMutant({type:'roadmap', maxZoom:21}), {toggleDisplay: true, position: position}).addTo(window.map);
+    new L.Control.MiniMap(new L.Google('ROADMAP',{maxZoom:21}), {toggleDisplay: true, position: position}).addTo(window.map);
   }, 0);
 
   $('head').append('<style>.leaflet-control-minimap {\n    border:solid rgba(255, 255, 255, 0.7) 3px;\n    box-shadow: 0 1px 7px #999;\n    background: #f8f8f9;\n    -moz-border-radius: 8px;\n    -webkit-border-radius: 8px;\n    border-radius: 8px;\n}\n\n.leaflet-control-minimap a {\n    background-color: rgba(255, 255, 255, 0.75);\n    background-position: 1px 2px;\n    background-repeat: no-repeat;\n    display: block;\n    outline: none;\n    z-index: 99999;\n}\n\n.leaflet-control-minimap a.minimized {\n    background-position: 1px -18px;\n}\n\n.leaflet-control-minimap-toggle-display {\n    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAmCAYAAADJJcvsAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB90BEAAINZFnlVUAAAGwSURBVEjH7dU/SyNBGAbwd11Zi8ueFhKyclbCSzgw+A+7A2fgipDmyvsA11grB4e9B8YvEPwYsgQhmbxidVi5IMSByHWzTBAOdquFZWwiHJKNu7HQIk858P4GhnlmAGaZKsYY2xizUGRmbtxiEATfut3uudb6Q8ZGC7mg4XB4OBgMvvq+fxmG4fIzZI2IznJBtVqNHMeBJEm2hRAXSqnlEbJKRBdSytVcULlc/lWv149d14UoiraEEJdKqV0i6kkp18bNzGcdXqVSOVJK/RNCnMRx/Nn3/T9pmhY77Kd4ntfknJNt2zAJeREyxpz2+/29l5CJkDGmSUQHUspc92g+A+FEtCGl7GTM3cxqO8u7jjWhIhYALI1qtAgANgB8BIAHy7L+5oJarZbJ8DUifmGMyULtf5YHROTjkCJQhIh1xtjtVO/RU2zbvqtWq3Lqh22ERGma7gghrpRSn6aCEPFno9HYLJVKwziO13u93nUYhtuFIEQ8Zow1Pc8bcM6/u66bRFFUabfbXa31Ti4IEX8zxo7++wQE5/yH4zgmSZL7IAjuXnV7tdb7nU5nZdbjN84jVmvCsn+YeNEAAAAASUVORK5CYII=);\n    border-radius: 4px 4px 4px 4px;\n    height: 19px;\n    width: 19px;\n    position: absolute;\n    bottom: 0;\n    right: 0; \n}\n.leaflet-left .leaflet-control-minimap-toggle-display {\n    left: 0;\n    right: auto;\n    transform: scaleX(-1);\n}\n.leaflet-top .leaflet-control-minimap-toggle-display {\n    bottom: auto;\n    top: 0;\n    transform: scaleY(-1);\n}\n.leaflet-top.leaflet-left .leaflet-control-minimap-toggle-display {\n    transform: scaleY(-1) scaleX(-1);\n}\n\n</style>');

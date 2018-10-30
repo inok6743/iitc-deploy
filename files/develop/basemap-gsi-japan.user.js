@@ -2,11 +2,11 @@
 // @id             iitc-plugin-basemap-gsi-japan
 // @name           IITC plugin: GSI map tiles (Japan Only)
 // @category       Map Tiles
-// @version        0.2.5.20180421.92633
+// @version        0.2.5.20181030.115356
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2018-04-21-092633] Add the map tiles provided by Geospatial Information Authority of Japan as optional layers. Available only in Japan.
+// @description    [local-2018-10-30-115356] Add the map tiles provided by Geospatial Information Authority of Japan as optional layers. Available only in Japan.
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
@@ -26,7 +26,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'local';
-plugin_info.dateTimeVersion = '20180421.92633';
+plugin_info.dateTimeVersion = '20181030.115356';
 plugin_info.pluginId = 'basemap-gsi-japan';
 //END PLUGIN AUTHORS NOTE
 

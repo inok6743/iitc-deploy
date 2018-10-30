@@ -2,11 +2,11 @@
 // @id             iitc-plugin-draw-tools@breunigs
 // @name           IITC plugin: draw tools
 // @category       Layer
-// @version        0.7.0.20180421.92633
+// @version        0.7.0.20181030.115356
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2018-04-21-092633] Allow drawing things onto the current map so you may plan your next move.
+// @description    [local-2018-10-30-115356] Allow drawing things onto the current map so you may plan your next move.
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
@@ -26,7 +26,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'local';
-plugin_info.dateTimeVersion = '20180421.92633';
+plugin_info.dateTimeVersion = '20181030.115356';
 plugin_info.pluginId = 'draw-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -41,129 +41,39 @@ window.plugin.drawTools = function() {};
 window.plugin.drawTools.loadExternals = function() {
   try { console.log('Loading leaflet.draw JS now'); } catch(e) {}
   /*
- Leaflet.draw 0.4.14, a plugin that adds drawing and editing tools to Leaflet powered maps.
- (c) 2012-2017, Jacob Toye, Jon West, Smartrak, Leaflet
+	Leaflet.draw, a plugin that adds drawing and editing tools to Leaflet powered maps.
+	(c) 2012-2013, Jacob Toye, Smartrak
 
- https://github.com/Leaflet/Leaflet.draw
- http://leafletjs.com
- */
-(function (window, document, undefined) {/**
+	https://github.com/Leaflet/Leaflet.draw
+	http://leafletjs.com
+	https://github.com/jacobtoye
+*/
+(function (window, document, undefined) {
+/*
  * Leaflet.draw assumes that you have already included the Leaflet library.
  */
-L.drawVersion = "0.4.14";
-/**
- * @class L.Draw
- * @aka Draw
- *
- *
- * To add the draw toolbar set the option drawControl: true in the map options.
- *
- * @example
- * ```js
- *      var map = L.map('map', {drawControl: true}).setView([51.505, -0.09], 13);
- *
- *      L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
- *          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
- *      }).addTo(map);
- * ```
- *
- * ### Adding the edit toolbar
- * To use the edit toolbar you must initialise the Leaflet.draw control and manually add it to the map.
- *
- * ```js
- *      var map = L.map('map').setView([51.505, -0.09], 13);
- *
- *      L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
- *          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
- *      }).addTo(map);
- *
- *      // FeatureGroup is to store editable layers
- *      var drawnItems = new L.FeatureGroup();
- *      map.addLayer(drawnItems);
- *
- *      var drawControl = new L.Control.Draw({
- *          edit: {
- *              featureGroup: drawnItems
- *          }
- *      });
- *      map.addControl(drawControl);
- * ```
- *
- * The key here is the featureGroup option. This tells the plugin which FeatureGroup contains the layers that
- * should be editable. The featureGroup can contain 0 or more features with geometry types Point, LineString, and Polygon.
- * Leaflet.draw does not work with multigeometry features such as MultiPoint, MultiLineString, MultiPolygon,
- * or GeometryCollection. If you need to add multigeometry features to the draw plugin, convert them to a
- * FeatureCollection of non-multigeometries (Points, LineStrings, or Polygons).
- */
-L.Draw = {};
 
-/**
- * @class L.drawLocal
- * @aka L.drawLocal
- *
- * The core toolbar class of the API — it is used to create the toolbar ui
- *
- * @example
- * ```js
- *      var modifiedDraw = L.drawLocal.extend({
- *          draw: {
- *              toolbar: {
- *                  buttons: {
- *                      polygon: 'Draw an awesome polygon'
- *                  }
- *              }
- *          }
- *      });
- * ```
- *
- * The default state for the control is the draw toolbar just below the zoom control.
- *  This will allow map users to draw vectors and markers.
- *  **Please note the edit toolbar is not enabled by default.**
- */
+L.drawVersion = '0.2.1-dev';
+
 L.drawLocal = {
-	// format: {
-	// 	numeric: {
-	// 		delimiters: {
-	// 			thousands: ',',
-	// 			decimal: '.'
-	// 		}
-	// 	}
-	// },
 	draw: {
 		toolbar: {
-			// #TODO: this should be reorganized where actions are nested in actions
-			// ex: actions.undo  or actions.cancel
 			actions: {
 				title: 'Cancel drawing',
 				text: 'Cancel'
-			},
-			finish: {
-				title: 'Finish drawing',
-				text: 'Finish'
-			},
-			undo: {
-				title: 'Delete last point drawn',
-				text: 'Delete last point'
 			},
 			buttons: {
 				polyline: 'Draw a polyline',
 				polygon: 'Draw a polygon',
 				rectangle: 'Draw a rectangle',
 				circle: 'Draw a circle',
-				marker: 'Draw a marker',
-				circlemarker: 'Draw a circlemarker'
+				marker: 'Draw a marker'
 			}
 		},
 		handlers: {
 			circle: {
 				tooltip: {
 					start: 'Click and drag to draw circle.'
-				},
-				radius: 'Radius'
-			},
-			circlemarker: {
-				tooltip: {
-					start: 'Click map to place circle marker.'
 				}
 			},
 			marker: {
@@ -202,231 +112,40 @@ L.drawLocal = {
 		toolbar: {
 			actions: {
 				save: {
-					title: 'Save changes',
+					title: 'Save changes.',
 					text: 'Save'
 				},
 				cancel: {
-					title: 'Cancel editing, discards all changes',
+					title: 'Cancel editing, discards all changes.',
 					text: 'Cancel'
-				},
-				clearAll: {
-					title: 'Clear all layers',
-					text: 'Clear All'
 				}
 			},
 			buttons: {
 				edit: 'Edit layers',
-				editDisabled: 'No layers to edit',
-				remove: 'Delete layers',
-				removeDisabled: 'No layers to delete'
+				remove: 'Delete layers'
 			}
 		},
 		handlers: {
 			edit: {
 				tooltip: {
-					text: 'Drag handles or markers to edit features.',
+					text: 'Drag handles, or marker to edit feature.',
 					subtext: 'Click cancel to undo changes.'
 				}
 			},
 			remove: {
 				tooltip: {
-					text: 'Click on a feature to remove.'
+					text: 'Click on a feature to remove'
 				}
 			}
 		}
 	}
 };
 
+L.Draw = {};
 
-
-/**
- * ### Events
- * Once you have successfully added the Leaflet.draw plugin to your map you will want to respond to the different
- * actions users can initiate. The following events will be triggered on the map:
- *
- * @class L.Draw.Event
- * @aka Draw.Event
- *
- * Use `L.Draw.Event.EVENTNAME` constants to ensure events are correct.
- *
- * @example
- * ```js
- * map.on(L.Draw.Event.CREATED; function (e) {
- *    var type = e.layerType,
- *        layer = e.layer;
- *
- *    if (type === 'marker') {
- *        // Do marker specific actions
- *    }
- *
- *    // Do whatever else you need to. (save to db; add to map etc)
- *    map.addLayer(layer);
- *});
- * ```
- */
-L.Draw.Event = {};
-/**
- * @event draw:created: PolyLine; Polygon; Rectangle; Circle; Marker | String
- *
- * Layer that was just created.
- * The type of layer this is. One of: `polyline`; `polygon`; `rectangle`; `circle`; `marker`
- * Triggered when a new vector or marker has been created.
- *
- */
-L.Draw.Event.CREATED = 'draw:created';
-
-/**
- * @event draw:edited: LayerGroup
- *
- * List of all layers just edited on the map.
- *
- *
- * Triggered when layers in the FeatureGroup; initialised with the plugin; have been edited and saved.
- *
- * @example
- * ```js
- *      map.on('draw:edited', function (e) {
-     *          var layers = e.layers;
-     *          layers.eachLayer(function (layer) {
-     *              //do whatever you want; most likely save back to db
-     *          });
-     *      });
- * ```
- */
-L.Draw.Event.EDITED = 'draw:edited';
-
-/**
- * @event draw:deleted: LayerGroup
- *
- * List of all layers just removed from the map.
- *
- * Triggered when layers have been removed (and saved) from the FeatureGroup.
- */
-L.Draw.Event.DELETED = 'draw:deleted';
-
-/**
- * @event draw:drawstart: String
- *
- * The type of layer this is. One of:`polyline`; `polygon`; `rectangle`; `circle`; `marker`
- *
- * Triggered when the user has chosen to draw a particular vector or marker.
- */
-L.Draw.Event.DRAWSTART = 'draw:drawstart';
-
-/**
- * @event draw:drawstop: String
- *
- * The type of layer this is. One of: `polyline`; `polygon`; `rectangle`; `circle`; `marker`
- *
- * Triggered when the user has finished a particular vector or marker.
- */
-
-L.Draw.Event.DRAWSTOP = 'draw:drawstop';
-
-/**
- * @event draw:drawvertex: LayerGroup
- *
- * List of all layers just being added from the map.
- *
- * Triggered when a vertex is created on a polyline or polygon.
- */
-L.Draw.Event.DRAWVERTEX = 'draw:drawvertex';
-
-/**
- * @event draw:editstart: String
- *
- * The type of edit this is. One of: `edit`
- *
- * Triggered when the user starts edit mode by clicking the edit tool button.
- */
-
-L.Draw.Event.EDITSTART = 'draw:editstart';
-
-/**
- * @event draw:editmove: ILayer
- *
- *  Layer that was just moved.
- *
- * Triggered as the user moves a rectangle; circle or marker.
- */
-L.Draw.Event.EDITMOVE = 'draw:editmove';
-
-/**
- * @event draw:editresize: ILayer
- *
- * Layer that was just moved.
- *
- * Triggered as the user resizes a rectangle or circle.
- */
-L.Draw.Event.EDITRESIZE = 'draw:editresize';
-
-/**
- * @event draw:editvertex: LayerGroup
- *
- * List of all layers just being edited from the map.
- *
- * Triggered when a vertex is edited on a polyline or polygon.
- */
-L.Draw.Event.EDITVERTEX = 'draw:editvertex';
-
-/**
- * @event draw:editstop: String
- *
- * The type of edit this is. One of: `edit`
- *
- * Triggered when the user has finshed editing (edit mode) and saves edits.
- */
-L.Draw.Event.EDITSTOP = 'draw:editstop';
-
-/**
- * @event draw:deletestart: String
- *
- * The type of edit this is. One of: `remove`
- *
- * Triggered when the user starts remove mode by clicking the remove tool button.
- */
-L.Draw.Event.DELETESTART = 'draw:deletestart';
-
-/**
- * @event draw:deletestop: String
- *
- * The type of edit this is. One of: `remove`
- *
- * Triggered when the user has finished removing shapes (remove mode) and saves.
- */
-L.Draw.Event.DELETESTOP = 'draw:deletestop';
-
-/**
- * @event draw:toolbaropened: String
- *
- * Triggered when a toolbar is opened.
- */
-L.Draw.Event.TOOLBAROPENED = 'draw:toolbaropened';
-
-/**
- * @event draw:toolbarclosed: String
- *
- * Triggered when a toolbar is closed.
- */
-L.Draw.Event.TOOLBARCLOSED = 'draw:toolbarclosed';
-
-/**
- * @event draw:markercontext: String
- *
- * Triggered when a marker is right clicked.
- */
-L.Draw.Event.MARKERCONTEXT = 'draw:markercontext';
-
-
-L.Draw = L.Draw || {};
-
-/**
- * @class L.Draw.Feature
- * @aka Draw.Feature
- */
 L.Draw.Feature = L.Handler.extend({
+	includes: L.Mixin.Events,
 
-	// @method initialize(): void
 	initialize: function (map, options) {
 		this._map = map;
 		this._container = map._container;
@@ -437,62 +156,39 @@ L.Draw.Feature = L.Handler.extend({
 		if (options && options.shapeOptions) {
 			options.shapeOptions = L.Util.extend({}, this.options.shapeOptions, options.shapeOptions);
 		}
-		L.setOptions(this, options);
-
-		var version = L.version.split('.');
-		//If Version is >= 1.2.0
-		if (parseInt(version[0], 10) === 1 && parseInt(version[1], 10) >= 2) {
-			L.Draw.Feature.include(L.Evented.prototype);
-		} else {
-			L.Draw.Feature.include(L.Mixin.Events);
-		}
+		L.Util.extend(this.options, options);
 	},
 
-	// @method enable(): void
-	// Enables this handler
 	enable: function () {
-		if (this._enabled) {
-			return;
-		}
+		if (this._enabled) { return; }
 
 		L.Handler.prototype.enable.call(this);
 
-		this.fire('enabled', {handler: this.type});
+		this.fire('enabled', { handler: this.type });
 
-		this._map.fire(L.Draw.Event.DRAWSTART, {layerType: this.type});
+		this._map.fire('draw:drawstart', { layerType: this.type });
 	},
 
-	// @method disable(): void
 	disable: function () {
-		if (!this._enabled) {
-			return;
-		}
+		if (!this._enabled) { return; }
 
 		L.Handler.prototype.disable.call(this);
 
-		this._map.fire(L.Draw.Event.DRAWSTOP, {layerType: this.type});
+		this.fire('disabled', { handler: this.type });
 
-		this.fire('disabled', {handler: this.type});
+		this._map.fire('draw:drawstop', { layerType: this.type });
 	},
 
-	// @method addHooks(): void
-	// Add's event listeners to this handler
 	addHooks: function () {
-		var map = this._map;
-
-		if (map) {
+		if (this._map) {
 			L.DomUtil.disableTextSelection();
 
-			map.getContainer().focus();
+			this._tooltip = new L.Tooltip(this._map);
 
-			this._tooltip = new L.Draw.Tooltip(this._map);
-
-			L.DomEvent.on(this._container, 'keyup', this._cancelDrawing, this);
+			L.DomEvent.addListener(this._container, 'keyup', this._cancelDrawing, this);
 		}
 	},
 
-	// @method removeHooks(): void
-	// Removes event listeners from this handler
 	removeHooks: function () {
 		if (this._map) {
 			L.DomUtil.enableTextSelection();
@@ -500,42 +196,32 @@ L.Draw.Feature = L.Handler.extend({
 			this._tooltip.dispose();
 			this._tooltip = null;
 
-			L.DomEvent.off(this._container, 'keyup', this._cancelDrawing, this);
+			L.DomEvent.removeListener(this._container, 'keyup', this._cancelDrawing);
 		}
 	},
 
-	// @method setOptions(object): void
-	// Sets new options to this handler
 	setOptions: function (options) {
 		L.setOptions(this, options);
 	},
 
 	_fireCreatedEvent: function (layer) {
-		this._map.fire(L.Draw.Event.CREATED, {layer: layer, layerType: this.type});
+		this._map.fire('draw:created', { layer: layer, layerType: this.type });
 	},
 
 	// Cancel drawing when the escape key is pressed
 	_cancelDrawing: function (e) {
 		if (e.keyCode === 27) {
-			this._map.fire('draw:canceled', {layerType: this.type});
 			this.disable();
 		}
 	}
 });
 
-
-
-/**
- * @class L.Draw.Polyline
- * @aka Draw.Polyline
- * @inherits L.Draw.Feature
- */
 L.Draw.Polyline = L.Draw.Feature.extend({
 	statics: {
 		TYPE: 'polyline'
 	},
 
-	Poly: L.Polyline,
+	Poly: L.GeodesicPolyline,
 
 	options: {
 		allowIntersection: true,
@@ -548,36 +234,20 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 			iconSize: new L.Point(8, 8),
 			className: 'leaflet-div-icon leaflet-editing-icon'
 		}),
-		touchIcon: new L.DivIcon({
-			iconSize: new L.Point(20, 20),
-			className: 'leaflet-div-icon leaflet-editing-icon leaflet-touch-icon'
-		}),
 		guidelineDistance: 20,
-		maxGuideLineLength: 4000,
 		shapeOptions: {
 			stroke: true,
-			color: '#3388ff',
+			color: '#f06eaa',
 			weight: 4,
 			opacity: 0.5,
 			fill: false,
 			clickable: true
 		},
 		metric: true, // Whether to use the metric measurement system or imperial
-		feet: true, // When not metric, to use feet instead of yards for display.
-		nautic: false, // When not metric, not feet use nautic mile for display
-		showLength: true, // Whether to display distance in the tooltip
-		zIndexOffset: 2000, // This should be > than the highest z-index any map layers
-		factor: 1, // To change distance calculation
-		maxPoints: 0 // Once this number of points are placed, finish shape
+		zIndexOffset: 2000 // This should be > than the highest z-index any map layers
 	},
 
-	// @method initialize(): void
 	initialize: function (map, options) {
-		// if touch, switch to touch icon
-		if (L.Browser.touch) {
-			this.options.icon = this.options.touchIcon;
-		}
-
 		// Need to set this here to ensure the correct message is used.
 		this.options.drawError.message = L.drawLocal.draw.handlers.polyline.error;
 
@@ -592,8 +262,6 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 		L.Draw.Feature.prototype.initialize.call(this, map, options);
 	},
 
-	// @method addHooks(): void
-	// Add listener hooks to this handler
 	addHooks: function () {
 		L.Draw.Feature.prototype.addHooks.call(this);
 		if (this._map) {
@@ -602,7 +270,7 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 			this._markerGroup = new L.LayerGroup();
 			this._map.addLayer(this._markerGroup);
 
-			this._poly = new L.Polyline([], this.options.shapeOptions);
+			this._poly = new L.GeodesicPolyline([], this.options.shapeOptions);
 
 			this._tooltip.updateContent(this._getTooltipText());
 
@@ -624,24 +292,15 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 			}
 
 			this._mouseMarker
-				.on('mouseout', this._onMouseOut, this)
-				.on('mousemove', this._onMouseMove, this) // Necessary to prevent 0.8 stutter
-				.on('mousedown', this._onMouseDown, this)
-				.on('mouseup', this._onMouseUp, this) // Necessary for 0.8 compatibility
+				.on('click', this._onClick, this)
 				.addTo(this._map);
 
 			this._map
-				.on('mouseup', this._onMouseUp, this) // Necessary for 0.7 compatibility
 				.on('mousemove', this._onMouseMove, this)
-				.on('zoomlevelschange', this._onZoomEnd, this)
-				.on('touchstart', this._onTouch, this)
 				.on('zoomend', this._onZoomEnd, this);
-
 		}
 	},
 
-	// @method removeHooks(): void
-	// Remove listener hooks from this handler.
 	removeHooks: function () {
 		L.Draw.Feature.prototype.removeHooks.call(this);
 
@@ -657,11 +316,7 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 		this._map.removeLayer(this._poly);
 		delete this._poly;
 
-		this._mouseMarker
-			.off('mousedown', this._onMouseDown, this)
-			.off('mouseout', this._onMouseOut, this)
-			.off('mouseup', this._onMouseUp, this)
-			.off('mousemove', this._onMouseMove, this);
+		this._mouseMarker.off('click', this._onClick, this);
 		this._map.removeLayer(this._mouseMarker);
 		delete this._mouseMarker;
 
@@ -669,79 +324,12 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 		this._clearGuides();
 
 		this._map
-			.off('mouseup', this._onMouseUp, this)
 			.off('mousemove', this._onMouseMove, this)
-			.off('zoomlevelschange', this._onZoomEnd, this)
-			.off('zoomend', this._onZoomEnd, this)
-			.off('touchstart', this._onTouch, this)
-			.off('click', this._onTouch, this);
-	},
-
-	// @method deleteLastVertex(): void
-	// Remove the last vertex from the polyline, removes polyline from map if only one point exists.
-	deleteLastVertex: function () {
-		if (this._markers.length <= 1) {
-			return;
-		}
-
-		var lastMarker = this._markers.pop(),
-			poly = this._poly,
-			// Replaces .spliceLatLngs()
-			latlngs = poly.getLatLngs(),
-			latlng = latlngs.splice(-1, 1)[0];
-		this._poly.setLatLngs(latlngs);
-
-		this._markerGroup.removeLayer(lastMarker);
-
-		if (poly.getLatLngs().length < 2) {
-			this._map.removeLayer(poly);
-		}
-
-		this._vertexChanged(latlng, false);
-	},
-
-	// @method addVertex(): void
-	// Add a vertex to the end of the polyline
-	addVertex: function (latlng) {
-		var markersLength = this._markers.length;
-		// markersLength must be greater than or equal to 2 before intersections can occur
-		if (markersLength >= 2 && !this.options.allowIntersection && this._poly.newLatLngIntersects(latlng)) {
-			this._showErrorTooltip();
-			return;
-		}
-		else if (this._errorShown) {
-			this._hideErrorTooltip();
-		}
-
-		this._markers.push(this._createMarker(latlng));
-
-		this._poly.addLatLng(latlng);
-
-		if (this._poly.getLatLngs().length === 2) {
-			this._map.addLayer(this._poly);
-		}
-
-		this._vertexChanged(latlng, true);
-	},
-
-	// @method completeShape(): void
-	// Closes the polyline between the first and last points
-	completeShape: function () {
-		if (this._markers.length <= 1) {
-			return;
-		}
-
-		this._fireCreatedEvent();
-		this.disable();
-
-		if (this.options.repeatMode) {
-			this.enable();
-		}
+			.off('zoomend', this._onZoomEnd, this);
 	},
 
 	_finishShape: function () {
-		var latlngs = this._poly._defaultShape ? this._poly._defaultShape() : this._poly.getLatLngs();
-		var intersects = this._poly.newLatLngIntersects(latlngs[latlngs.length - 1]);
+		var intersects = this._poly.newLatLngIntersects(this._poly.getLatLngs()[0], true);
 
 		if ((!this.options.allowIntersection && intersects) || !this._shapeIsValid()) {
 			this._showErrorTooltip();
@@ -755,21 +343,19 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 		}
 	},
 
-	// Called to verify the shape is valid when the user tries to finish it
-	// Return false if the shape is not valid
+	//Called to verify the shape is valid when the user tries to finish it
+	//Return false if the shape is not valid
 	_shapeIsValid: function () {
 		return true;
 	},
 
 	_onZoomEnd: function () {
-		if (this._markers !== null) {
-			this._updateGuide();
-		}
+		this._updateGuide();
 	},
 
 	_onMouseMove: function (e) {
-		var newPos = this._map.mouseEventToLayerPoint(e.originalEvent);
-		var latlng = this._map.layerPointToLatLng(newPos);
+		var newPos = e.layerPoint,
+			latlng = e.latlng;
 
 		// Save latlng
 		// should this be moved to _updateGuide() ?
@@ -786,109 +372,35 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 		L.DomEvent.preventDefault(e.originalEvent);
 	},
 
-	_vertexChanged: function (latlng, added) {
-		this._map.fire(L.Draw.Event.DRAWVERTEX, {layers: this._markerGroup});
+	_onClick: function (e) {
+		var latlng = e.target.getLatLng(),
+			markerCount = this._markers.length;
+
+                if (this.options.snapPoint) latlng = this.options.snapPoint(latlng);
+
+		if (markerCount > 0 && !this.options.allowIntersection && this._poly.newLatLngIntersects(latlng)) {
+			this._showErrorTooltip();
+			return;
+		}
+		else if (this._errorShown) {
+			this._hideErrorTooltip();
+		}
+
+		this._markers.push(this._createMarker(latlng));
+
+		this._poly.addLatLng(latlng);
+
+		if (this._poly.getLatLngs().length === 2) {
+			this._map.addLayer(this._poly);
+		}
+
 		this._updateFinishHandler();
 
-		this._updateRunningMeasure(latlng, added);
+		this._vertexAdded(latlng);
 
 		this._clearGuides();
 
 		this._updateTooltip();
-	},
-
-	_onMouseDown: function (e) {
-		if (!this._clickHandled && !this._touchHandled && !this._disableMarkers) {
-			this._onMouseMove(e);
-			this._clickHandled = true;
-			this._disableNewMarkers();
-			var originalEvent = e.originalEvent;
-			var clientX = originalEvent.clientX;
-			var clientY = originalEvent.clientY;
-			this._startPoint.call(this, clientX, clientY);
-		}
-	},
-
-	_startPoint: function (clientX, clientY) {
-		this._mouseDownOrigin = L.point(clientX, clientY);
-	},
-
-	_onMouseUp: function (e) {
-		var originalEvent = e.originalEvent;
-		var clientX = originalEvent.clientX;
-		var clientY = originalEvent.clientY;
-		this._endPoint.call(this, clientX, clientY, e);
-		this._clickHandled = null;
-	},
-
-	_endPoint: function (clientX, clientY, e) {
-		if (this._mouseDownOrigin) {
-			var dragCheckDistance = L.point(clientX, clientY)
-				.distanceTo(this._mouseDownOrigin);
-			var lastPtDistance = this._calculateFinishDistance(e.latlng);
-			if (this.options.maxPoints > 1 && this.options.maxPoints == this._markers.length + 1) {
-				this.addVertex(e.latlng);
-				this._finishShape();
-			} else if (lastPtDistance < 10 && L.Browser.touch) {
-				this._finishShape();
-			} else if (Math.abs(dragCheckDistance) < 9 * (window.devicePixelRatio || 1)) {
-				this.addVertex(e.latlng);
-			}
-			this._enableNewMarkers(); // after a short pause, enable new markers
-		}
-		this._mouseDownOrigin = null;
-	},
-
-	// ontouch prevented by clickHandled flag because some browsers fire both click/touch events,
-	// causing unwanted behavior
-	_onTouch: function (e) {
-		var originalEvent = e.originalEvent;
-		var clientX;
-		var clientY;
-		if (originalEvent.touches && originalEvent.touches[0] && !this._clickHandled && !this._touchHandled && !this._disableMarkers) {
-			clientX = originalEvent.touches[0].clientX;
-			clientY = originalEvent.touches[0].clientY;
-			this._disableNewMarkers();
-			this._touchHandled = true;
-			this._startPoint.call(this, clientX, clientY);
-			this._endPoint.call(this, clientX, clientY, e);
-			this._touchHandled = null;
-		}
-		this._clickHandled = null;
-	},
-
-	_onMouseOut: function () {
-		if (this._tooltip) {
-			this._tooltip._onMouseOut.call(this._tooltip);
-		}
-	},
-
-	// calculate if we are currently within close enough distance
-	// of the closing point (first point for shapes, last point for lines)
-	// this is semi-ugly code but the only reliable way i found to get the job done
-	// note: calculating point.distanceTo between mouseDownOrigin and last marker did NOT work
-	_calculateFinishDistance: function (potentialLatLng) {
-		var lastPtDistance;
-		if (this._markers.length > 0) {
-			var finishMarker;
-			if (this.type === L.Draw.Polyline.TYPE) {
-				finishMarker = this._markers[this._markers.length - 1];
-			} else if (this.type === L.Draw.Polygon.TYPE) {
-				finishMarker = this._markers[0];
-			} else {
-				return Infinity;
-			}
-			var lastMarkerPoint = this._map.latLngToContainerPoint(finishMarker.getLatLng()),
-				potentialMarker = new L.Marker(potentialLatLng, {
-					icon: this.options.icon,
-					zIndexOffset: this.options.zIndexOffset * 2
-				});
-			var potentialMarkerPint = this._map.latLngToContainerPoint(potentialMarker.getLatLng());
-			lastPtDistance = lastMarkerPoint.distanceTo(potentialMarkerPint);
-		} else {
-			lastPtDistance = Infinity;
-		}
-		return lastPtDistance;
 	},
 
 	_updateFinishHandler: function () {
@@ -916,7 +428,7 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 	},
 
 	_updateGuide: function (newPos) {
-		var markerCount = this._markers ? this._markers.length : 0;
+		var markerCount = this._markers.length;
 
 		if (markerCount > 0) {
 			newPos = newPos || this._map.latLngToLayerPoint(this._currentLatLng);
@@ -943,11 +455,10 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 	},
 
 	_drawGuide: function (pointA, pointB) {
+//TODO: rewrite this to use a regular leaflet line with a dashpattern!
+
 		var length = Math.floor(Math.sqrt(Math.pow((pointB.x - pointA.x), 2) + Math.pow((pointB.y - pointA.y), 2))),
-			guidelineDistance = this.options.guidelineDistance,
-			maxGuideLineLength = this.options.maxGuideLineLength,
-			// Only draw a guideline with a max length
-			i = length > maxGuideLineLength ? length - maxGuideLineLength : guidelineDistance,
+			i,
 			fraction,
 			dashPoint,
 			dash;
@@ -958,7 +469,7 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 		}
 
 		//draw a dash every GuildeLineDistance
-		for (; i < length; i += this.options.guidelineDistance) {
+		for (i = this.options.guidelineDistance; i < length; i += this.options.guidelineDistance) {
 			//work out fraction along line we are
 			fraction = i / length;
 
@@ -995,14 +506,16 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 	},
 
 	_getTooltipText: function () {
-		var showLength = this.options.showLength,
-			labelText, distanceStr;
+		var labelText,
+			distance,
+			distanceStr;
+
 		if (this._markers.length === 0) {
 			labelText = {
 				text: L.drawLocal.draw.handlers.polyline.tooltip.start
 			};
 		} else {
-			distanceStr = showLength ? this._getMeasurementString() : '';
+			distanceStr = this._getMeasurementString();
 
 			if (this._markers.length === 1) {
 				labelText = {
@@ -1019,39 +532,15 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 		return labelText;
 	},
 
-	_updateRunningMeasure: function (latlng, added) {
-		var markersLength = this._markers.length,
-			previousMarkerIndex, distance;
-
-		if (this._markers.length === 1) {
-			this._measurementRunningTotal = 0;
-		} else {
-			previousMarkerIndex = markersLength - (added ? 2 : 1);
-
-			// Calculate the distance based on the version
-			if (L.GeometryUtil.isVersion07x()) {
-				distance = latlng.distanceTo(this._markers[previousMarkerIndex].getLatLng()) * (this.options.factor || 1);
-			} else {
-				distance = this._map.distance(latlng, this._markers[previousMarkerIndex].getLatLng()) * (this.options.factor || 1);
-			}
-
-			this._measurementRunningTotal += distance * (added ? 1 : -1);
-		}
-	},
-
 	_getMeasurementString: function () {
 		var currentLatLng = this._currentLatLng,
 			previousLatLng = this._markers[this._markers.length - 1].getLatLng(),
 			distance;
 
-		// Calculate the distance from the last fixed point to the mouse position based on the version
-		if (L.GeometryUtil.isVersion07x()) {
-			distance = previousLatLng && currentLatLng && currentLatLng.distanceTo ? this._measurementRunningTotal + currentLatLng.distanceTo(previousLatLng) * (this.options.factor || 1) : this._measurementRunningTotal || 0;
-		} else {
-			distance = previousLatLng && currentLatLng ? this._measurementRunningTotal + this._map.distance(currentLatLng, previousLatLng) * (this.options.factor || 1) : this._measurementRunningTotal || 0;
-		}
+		// calculate the distance from the last fixed point to the mouse position
+		distance = this._measurementRunningTotal + currentLatLng.distanceTo(previousLatLng);
 
-		return L.GeometryUtil.readableDistance(distance, this.options.metric, this.options.feet, this.options.nautic, this.options.precision);
+		return L.GeometryUtil.readableDistance(distance, this.options.metric);
 	},
 
 	_showErrorTooltip: function () {
@@ -1060,11 +549,11 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 		// Update tooltip
 		this._tooltip
 			.showAsError()
-			.updateContent({text: this.options.drawError.message});
+			.updateContent({ text: this.options.drawError.message });
 
 		// Update shape
 		this._updateGuideColor(this.options.drawError.color);
-		this._poly.setStyle({color: this.options.drawError.color});
+		this._poly.setStyle({ color: this.options.drawError.color });
 
 		// Hide the error after 2 seconds
 		this._clearHideErrorTimeout();
@@ -1083,7 +572,7 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 
 		// Revert shape
 		this._updateGuideColor(this.options.shapeOptions.color);
-		this._poly.setStyle({color: this.options.shapeOptions.color});
+		this._poly.setStyle({ color: this.options.shapeOptions.color });
 	},
 
 	_clearHideErrorTimeout: function () {
@@ -1093,17 +582,14 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 		}
 	},
 
-	// disable new markers temporarily;
-	// this is to prevent duplicated touch/click events in some browsers
-	_disableNewMarkers: function () {
-		this._disableMarkers = true;
-	},
-
-	// see _disableNewMarkers
-	_enableNewMarkers: function () {
-		setTimeout(function () {
-			this._disableMarkers = false;
-		}.bind(this), 50);
+	_vertexAdded: function (latlng) {
+		if (this._markers.length === 1) {
+			this._measurementRunningTotal = 0;
+		}
+		else {
+			this._measurementRunningTotal +=
+				latlng.distanceTo(this._markers[this._markers.length - 2].getLatLng());
+		}
 	},
 
 	_cleanUpShape: function () {
@@ -1119,43 +605,27 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 });
 
 
-
-/**
- * @class L.Draw.Polygon
- * @aka Draw.Polygon
- * @inherits L.Draw.Polyline
- */
 L.Draw.Polygon = L.Draw.Polyline.extend({
 	statics: {
 		TYPE: 'polygon'
 	},
 
-	Poly: L.Polygon,
+	Poly: L.GeodesicPolygon,
 
 	options: {
 		showArea: false,
-		showLength: false,
 		shapeOptions: {
 			stroke: true,
-			color: '#3388ff',
+			color: '#f06eaa',
 			weight: 4,
 			opacity: 0.5,
 			fill: true,
 			fillColor: null, //same as color by default
 			fillOpacity: 0.2,
 			clickable: true
-		},
-		// Whether to use the metric measurement system (truthy) or not (falsy).
-		// Also defines the units to use for the metric system as an array of
-		// strings (e.g. `['ha', 'm']`).
-		metric: true,
-		feet: true, // When not metric, to use feet instead of yards for display.
-		nautic: false, // When not metric, not feet use nautic mile for display
-		// Defines the precision for each type of unit (e.g. {km: 2, ft: 0}
-		precision: {}
+		}
 	},
 
-	// @method initialize(): void
 	initialize: function (map, options) {
 		L.Draw.Polyline.prototype.initialize.call(this, map, options);
 
@@ -1166,7 +636,7 @@ L.Draw.Polygon = L.Draw.Polyline.extend({
 	_updateFinishHandler: function () {
 		var markerCount = this._markers.length;
 
-		// The first marker should have a click handler to close the polygon
+		// The first marker shold have a click handler to close the polygon
 		if (markerCount === 1) {
 			this._markers[0].on('click', this._finishShape, this);
 		}
@@ -1188,7 +658,6 @@ L.Draw.Polygon = L.Draw.Polyline.extend({
 			text = L.drawLocal.draw.handlers.polygon.tooltip.start;
 		} else if (this._markers.length < 3) {
 			text = L.drawLocal.draw.handlers.polygon.tooltip.cont;
-			subtext = this._getMeasurementString();
 		} else {
 			text = L.drawLocal.draw.handlers.polygon.tooltip.end;
 			subtext = this._getMeasurementString();
@@ -1201,40 +670,28 @@ L.Draw.Polygon = L.Draw.Polyline.extend({
 	},
 
 	_getMeasurementString: function () {
-		var area = this._area,
-			measurementString = '';
+		var area = this._area;
 
-
-		if (!area && !this.options.showLength) {
+		if (!area) {
 			return null;
 		}
 
-		if (this.options.showLength) {
-			measurementString = L.Draw.Polyline.prototype._getMeasurementString.call(this);
-		}
-
-		if (area) {
-			measurementString += '<br>' + L.GeometryUtil.readableArea(area, this.options.metric, this.options.precision);
-		}
-
-		return measurementString;
+		return L.GeometryUtil.readableArea(area, this.options.metric);
 	},
 
 	_shapeIsValid: function () {
 		return this._markers.length >= 3;
 	},
 
-	_vertexChanged: function (latlng, added) {
-		var latLngs;
-
+	_vertexAdded: function () {
 		// Check to see if we should show the area
-		if (!this.options.allowIntersection && this.options.showArea) {
-			latLngs = this._poly.getLatLngs();
-
-			this._area = L.GeometryUtil.geodesicArea(latLngs);
+		if (this.options.allowIntersection || !this.options.showArea) {
+			return;
 		}
 
-		L.Draw.Polyline.prototype._vertexChanged.call(this, latlng, added);
+		var latLngs = this._poly.getLatLngs();
+
+		this._area = L.GeometryUtil.geodesicArea(latLngs);
 	},
 
 	_cleanUpShape: function () {
@@ -1251,79 +708,46 @@ L.Draw.Polygon = L.Draw.Polyline.extend({
 });
 
 
-
 L.SimpleShape = {};
-/**
- * @class L.Draw.SimpleShape
- * @aka Draw.SimpleShape
- * @inherits L.Draw.Feature
- */
+
 L.Draw.SimpleShape = L.Draw.Feature.extend({
 	options: {
 		repeatMode: false
 	},
 
-	// @method initialize(): void
 	initialize: function (map, options) {
 		this._endLabelText = L.drawLocal.draw.handlers.simpleshape.tooltip.end;
 
 		L.Draw.Feature.prototype.initialize.call(this, map, options);
 	},
 
-	// @method addHooks(): void
-	// Add listener hooks to this handler.
 	addHooks: function () {
 		L.Draw.Feature.prototype.addHooks.call(this);
 		if (this._map) {
-			this._mapDraggable = this._map.dragging.enabled();
-
-			if (this._mapDraggable) {
-				this._map.dragging.disable();
-			}
-
+			this._map.dragging.disable();
 			//TODO refactor: move cursor to styles
 			this._container.style.cursor = 'crosshair';
 
-			this._tooltip.updateContent({text: this._initialLabelText});
+			this._tooltip.updateContent({ text: this._initialLabelText });
 
 			this._map
 				.on('mousedown', this._onMouseDown, this)
-				.on('mousemove', this._onMouseMove, this)
-				.on('touchstart', this._onMouseDown, this)
-				.on('touchmove', this._onMouseMove, this);
-
-			// we should prevent default, otherwise default behavior (scrolling) will fire,
-			// and that will cause document.touchend to fire and will stop the drawing
-			// (circle, rectangle) in touch mode.
-			// (update): we have to send passive now to prevent scroll, because by default it is {passive: true} now, which means,
-			// handler can't event.preventDefault
-			// check the news https://developers.google.com/web/updates/2016/06/passive-event-listeners
-			document.addEventListener('touchstart', L.DomEvent.preventDefault, {passive: false});
+				.on('mousemove', this._onMouseMove, this);
 		}
 	},
 
-	// @method removeHooks(): void
-	// Remove listener hooks from this handler.
 	removeHooks: function () {
 		L.Draw.Feature.prototype.removeHooks.call(this);
 		if (this._map) {
-			if (this._mapDraggable) {
-				this._map.dragging.enable();
-			}
-
+			this._map.dragging.enable();
 			//TODO refactor: move cursor to styles
 			this._container.style.cursor = '';
 
 			this._map
 				.off('mousedown', this._onMouseDown, this)
-				.off('mousemove', this._onMouseMove, this)
-				.off('touchstart', this._onMouseDown, this)
-				.off('touchmove', this._onMouseMove, this);
+				.off('mousemove', this._onMouseMove, this);
 
-			L.DomEvent.off(document, 'mouseup', this._onMouseUp, this);
-			L.DomEvent.off(document, 'touchend', this._onMouseUp, this);
-
-			document.removeEventListener('touchstart', L.DomEvent.preventDefault);
+			L.DomEvent.off(document, 'mouseup', this._onMouseUp);
 
 			// If the box element doesn't exist they must not have moved the mouse, so don't need to destroy/return
 			if (this._shape) {
@@ -1334,19 +758,14 @@ L.Draw.SimpleShape = L.Draw.Feature.extend({
 		this._isDrawing = false;
 	},
 
-	_getTooltipText: function () {
-		return {
-			text: this._endLabelText
-		};
-	},
-
 	_onMouseDown: function (e) {
 		this._isDrawing = true;
 		this._startLatLng = e.latlng;
 
+                if (this.options.snapPoint) this._startLatLng = this.options.snapPoint(this._startLatLng);
+
 		L.DomEvent
 			.on(document, 'mouseup', this._onMouseUp, this)
-			.on(document, 'touchend', this._onMouseUp, this)
 			.preventDefault(e.originalEvent);
 	},
 
@@ -1355,7 +774,7 @@ L.Draw.SimpleShape = L.Draw.Feature.extend({
 
 		this._tooltip.updatePosition(latlng);
 		if (this._isDrawing) {
-			this._tooltip.updateContent(this._getTooltipText());
+			this._tooltip.updateContent({ text: this._endLabelText });
 			this._drawShape(latlng);
 		}
 	},
@@ -1372,13 +791,6 @@ L.Draw.SimpleShape = L.Draw.Feature.extend({
 	}
 });
 
-
-
-/**
- * @class L.Draw.Rectangle
- * @aka Draw.Rectangle
- * @inherits L.Draw.SimpleShape
- */
 L.Draw.Rectangle = L.Draw.SimpleShape.extend({
 	statics: {
 		TYPE: 'rectangle'
@@ -1387,19 +799,16 @@ L.Draw.Rectangle = L.Draw.SimpleShape.extend({
 	options: {
 		shapeOptions: {
 			stroke: true,
-			color: '#3388ff',
+			color: '#f06eaa',
 			weight: 4,
 			opacity: 0.5,
 			fill: true,
 			fillColor: null, //same as color by default
 			fillOpacity: 0.2,
-			showArea: true,
 			clickable: true
-		},
-		metric: true // Whether to use the metric measurement system or imperial
+		}
 	},
 
-	// @method initialize(): void
 	initialize: function (map, options) {
 		// Save the type so super can fire, need to do this as cannot do this.TYPE :(
 		this.type = L.Draw.Rectangle.TYPE;
@@ -1407,30 +816,6 @@ L.Draw.Rectangle = L.Draw.SimpleShape.extend({
 		this._initialLabelText = L.drawLocal.draw.handlers.rectangle.tooltip.start;
 
 		L.Draw.SimpleShape.prototype.initialize.call(this, map, options);
-	},
-
-	// @method disable(): void
-	disable: function () {
-		if (!this._enabled) {
-			return;
-		}
-
-		this._isCurrentlyTwoClickDrawing = false;
-		L.Draw.SimpleShape.prototype.disable.call(this);
-	},
-
-	_onMouseUp: function (e) {
-		if (!this._shape && !this._isCurrentlyTwoClickDrawing) {
-			this._isCurrentlyTwoClickDrawing = true;
-			return;
-		}
-
-		// Make sure closing click is on map
-		if (this._isCurrentlyTwoClickDrawing && !_hasAncestor(e.target, 'leaflet-pane')) {
-			return;
-		}
-
-		L.Draw.SimpleShape.prototype._onMouseUp.call(this);
 	},
 
 	_drawShape: function (latlng) {
@@ -1445,41 +830,72 @@ L.Draw.Rectangle = L.Draw.SimpleShape.extend({
 	_fireCreatedEvent: function () {
 		var rectangle = new L.Rectangle(this._shape.getBounds(), this.options.shapeOptions);
 		L.Draw.SimpleShape.prototype._fireCreatedEvent.call(this, rectangle);
-	},
-
-	_getTooltipText: function () {
-		var tooltipText = L.Draw.SimpleShape.prototype._getTooltipText.call(this),
-			shape = this._shape,
-			showArea = this.options.showArea,
-			latLngs, area, subtext;
-
-		if (shape) {
-			latLngs = this._shape._defaultShape ? this._shape._defaultShape() : this._shape.getLatLngs();
-			area = L.GeometryUtil.geodesicArea(latLngs);
-			subtext = showArea ? L.GeometryUtil.readableArea(area, this.options.metric) : '';
-		}
-
-		return {
-			text: tooltipText.text,
-			subtext: subtext
-		};
 	}
 });
 
-function _hasAncestor(el, cls) {
-	while ((el = el.parentElement) && !el.classList.contains(cls)) {
-		;
+
+L.Draw.Circle = L.Draw.SimpleShape.extend({
+	statics: {
+		TYPE: 'circle'
+	},
+
+	options: {
+		shapeOptions: {
+			stroke: true,
+			color: '#f06eaa',
+			weight: 4,
+			opacity: 0.5,
+			fill: true,
+			fillColor: null, //same as color by default
+			fillOpacity: 0.2,
+			clickable: true
+		},
+		metric: true // Whether to use the metric measurement system or imperial
+	},
+
+	initialize: function (map, options) {
+		// Save the type so super can fire, need to do this as cannot do this.TYPE :(
+		this.type = L.Draw.Circle.TYPE;
+
+		this._initialLabelText = L.drawLocal.draw.handlers.circle.tooltip.start;
+
+		L.Draw.SimpleShape.prototype.initialize.call(this, map, options);
+	},
+
+	_drawShape: function (latlng) {
+		if (!this._shape) {
+			this._shape = new L.GeodesicCircle(this._startLatLng, this._startLatLng.distanceTo(latlng), this.options.shapeOptions);
+			this._map.addLayer(this._shape);
+		} else {
+			this._shape.setRadius(this._startLatLng.distanceTo(latlng));
+		}
+	},
+
+	_fireCreatedEvent: function () {
+		var circle = new L.GeodesicCircle(this._startLatLng, this._shape.getRadius(), this.options.shapeOptions);
+		L.Draw.SimpleShape.prototype._fireCreatedEvent.call(this, circle);
+	},
+
+	_onMouseMove: function (e) {
+		var latlng = e.latlng,
+			metric = this.options.metric,
+			radius;
+
+		this._tooltip.updatePosition(latlng);
+		if (this._isDrawing) {
+			this._drawShape(latlng);
+
+			// Get the new radius (rouded to 1 dp)
+			radius = this._shape.getRadius().toFixed(1);
+
+			this._tooltip.updateContent({
+				text: this._endLabelText,
+				subtext: 'Radius: ' + L.GeometryUtil.readableDistance(radius, this.options.metric)
+			});
+		}
 	}
-	return el;
-}
+});
 
-
-
-/**
- * @class L.Draw.Marker
- * @aka Draw.Marker
- * @inherits L.Draw.Feature
- */
 L.Draw.Marker = L.Draw.Feature.extend({
 	statics: {
 		TYPE: 'marker'
@@ -1491,23 +907,18 @@ L.Draw.Marker = L.Draw.Feature.extend({
 		zIndexOffset: 2000 // This should be > than the highest z-index any markers
 	},
 
-	// @method initialize(): void
 	initialize: function (map, options) {
 		// Save the type so super can fire, need to do this as cannot do this.TYPE :(
 		this.type = L.Draw.Marker.TYPE;
 
-		this._initialLabelText = L.drawLocal.draw.handlers.marker.tooltip.start;
-
 		L.Draw.Feature.prototype.initialize.call(this, map, options);
 	},
 
-	// @method addHooks(): void
-	// Add listener hooks to this handler.
 	addHooks: function () {
 		L.Draw.Feature.prototype.addHooks.call(this);
 
 		if (this._map) {
-			this._tooltip.updateContent({text: this._initialLabelText});
+			this._tooltip.updateContent({ text: L.drawLocal.draw.handlers.marker.tooltip.start });
 
 			// Same mouseMarker as in Draw.Polyline
 			if (!this._mouseMarker) {
@@ -1527,22 +938,17 @@ L.Draw.Marker = L.Draw.Feature.extend({
 				.addTo(this._map);
 
 			this._map.on('mousemove', this._onMouseMove, this);
-			this._map.on('click', this._onTouch, this);
 		}
 	},
 
-	// @method removeHooks(): void
-	// Remove listener hooks from this handler.
 	removeHooks: function () {
 		L.Draw.Feature.prototype.removeHooks.call(this);
 
 		if (this._map) {
-			this._map
-				.off('click', this._onClick, this)
-				.off('click', this._onTouch, this);
 			if (this._marker) {
 				this._marker.off('click', this._onClick, this);
 				this._map
+					.off('click', this._onClick, this)
 					.removeLayer(this._marker);
 				delete this._marker;
 			}
@@ -1562,7 +968,10 @@ L.Draw.Marker = L.Draw.Feature.extend({
 		this._mouseMarker.setLatLng(latlng);
 
 		if (!this._marker) {
-			this._marker = this._createMarker(latlng);
+			this._marker = new L.Marker(latlng, {
+				icon: this.options.icon,
+				zIndexOffset: this.options.zIndexOffset
+			});
 			// Bind to both marker and map to make sure we get the click event.
 			this._marker.on('click', this._onClick, this);
 			this._map
@@ -1570,19 +979,13 @@ L.Draw.Marker = L.Draw.Feature.extend({
 				.addLayer(this._marker);
 		}
 		else {
-			latlng = this._mouseMarker.getLatLng();
 			this._marker.setLatLng(latlng);
 		}
 	},
 
-	_createMarker: function (latlng) {
-		return new L.Marker(latlng, {
-			icon: this.options.icon,
-			zIndexOffset: this.options.zIndexOffset
-		});
-	},
-
 	_onClick: function () {
+                if (this.options.snapPoint) this._marker.setLatLng(this.options.snapPoint(this._marker.getLatLng()));
+
 		this._fireCreatedEvent();
 
 		this.disable();
@@ -1591,395 +994,33 @@ L.Draw.Marker = L.Draw.Feature.extend({
 		}
 	},
 
-	_onTouch: function (e) {
-		// called on click & tap, only really does any thing on tap
-		this._onMouseMove(e); // creates & places marker
-		this._onClick(); // permanently places marker & ends interaction
-	},
-
 	_fireCreatedEvent: function () {
-		var marker = new L.Marker.Touch(this._marker.getLatLng(), {icon: this.options.icon});
+		var marker = new L.Marker(this._marker.getLatLng(), { icon: this.options.icon });
 		L.Draw.Feature.prototype._fireCreatedEvent.call(this, marker);
 	}
 });
 
-
-
-/**
- * @class L.Draw.CircleMarker
- * @aka Draw.CircleMarker
- * @inherits L.Draw.Marker
- */
-L.Draw.CircleMarker = L.Draw.Marker.extend({
-	statics: {
-		TYPE: 'circlemarker'
-	},
-
-	options: {
-		stroke: true,
-		color: '#3388ff',
-		weight: 4,
-		opacity: 0.5,
-		fill: true,
-		fillColor: null, //same as color by default
-		fillOpacity: 0.2,
-		clickable: true,
-		zIndexOffset: 2000 // This should be > than the highest z-index any markers
-	},
-
-	// @method initialize(): void
-	initialize: function (map, options) {
-		// Save the type so super can fire, need to do this as cannot do this.TYPE :(
-		this.type = L.Draw.CircleMarker.TYPE;
-
-		this._initialLabelText = L.drawLocal.draw.handlers.circlemarker.tooltip.start;
-
-		L.Draw.Feature.prototype.initialize.call(this, map, options);
-	},
-
-
-	_fireCreatedEvent: function () {
-		var circleMarker = new L.CircleMarker(this._marker.getLatLng(), this.options);
-		L.Draw.Feature.prototype._fireCreatedEvent.call(this, circleMarker);
-	},
-
-	_createMarker: function (latlng) {
-		return new L.CircleMarker(latlng, this.options);
-	}
-});
-
-
-
-/**
- * @class L.Draw.Circle
- * @aka Draw.Circle
- * @inherits L.Draw.SimpleShape
- */
-L.Draw.Circle = L.Draw.SimpleShape.extend({
-	statics: {
-		TYPE: 'circle'
-	},
-
-	options: {
-		shapeOptions: {
-			stroke: true,
-			color: '#3388ff',
-			weight: 4,
-			opacity: 0.5,
-			fill: true,
-			fillColor: null, //same as color by default
-			fillOpacity: 0.2,
-			clickable: true
-		},
-		showRadius: true,
-		metric: true, // Whether to use the metric measurement system or imperial
-		feet: true, // When not metric, use feet instead of yards for display
-		nautic: false // When not metric, not feet use nautic mile for display
-	},
-
-	// @method initialize(): void
-	initialize: function (map, options) {
-		// Save the type so super can fire, need to do this as cannot do this.TYPE :(
-		this.type = L.Draw.Circle.TYPE;
-
-		this._initialLabelText = L.drawLocal.draw.handlers.circle.tooltip.start;
-
-		L.Draw.SimpleShape.prototype.initialize.call(this, map, options);
-	},
-
-	_drawShape: function (latlng) {
-		// Calculate the distance based on the version
-		if (L.GeometryUtil.isVersion07x()) {
-			var distance = this._startLatLng.distanceTo(latlng);
-		} else {
-			var distance = this._map.distance(this._startLatLng, latlng);
-		}
-
-		if (!this._shape) {
-			this._shape = new L.Circle(this._startLatLng, distance, this.options.shapeOptions);
-			this._map.addLayer(this._shape);
-		} else {
-			this._shape.setRadius(distance);
-		}
-	},
-
-	_fireCreatedEvent: function () {
-		var circle = new L.Circle(this._startLatLng, this._shape.getRadius(), this.options.shapeOptions);
-		L.Draw.SimpleShape.prototype._fireCreatedEvent.call(this, circle);
-	},
-
-	_onMouseMove: function (e) {
-		var latlng = e.latlng,
-			showRadius = this.options.showRadius,
-			useMetric = this.options.metric,
-			radius;
-
-		this._tooltip.updatePosition(latlng);
-		if (this._isDrawing) {
-			this._drawShape(latlng);
-
-			// Get the new radius (rounded to 1 dp)
-			radius = this._shape.getRadius().toFixed(1);
-
-			var subtext = '';
-			if (showRadius) {
-				subtext = L.drawLocal.draw.handlers.circle.radius + ': ' +
-					L.GeometryUtil.readableDistance(radius, useMetric, this.options.feet, this.options.nautic);
-			}
-			this._tooltip.updateContent({
-				text: this._endLabelText,
-				subtext: subtext
-			});
-		}
-	}
-});
-
-
-
 L.Edit = L.Edit || {};
 
-/**
- * @class L.Edit.Marker
- * @aka Edit.Marker
+/*
+ * L.Edit.Poly is an editing handler for polylines and polygons.
  */
-L.Edit.Marker = L.Handler.extend({
-	// @method initialize(): void
-	initialize: function (marker, options) {
-		this._marker = marker;
-		L.setOptions(this, options);
-	},
 
-	// @method addHooks(): void
-	// Add listener hooks to this handler
-	addHooks: function () {
-		var marker = this._marker;
-
-		marker.dragging.enable();
-		marker.on('dragend', this._onDragEnd, marker);
-		this._toggleMarkerHighlight();
-	},
-
-	// @method removeHooks(): void
-	// Remove listener hooks from this handler
-	removeHooks: function () {
-		var marker = this._marker;
-
-		marker.dragging.disable();
-		marker.off('dragend', this._onDragEnd, marker);
-		this._toggleMarkerHighlight();
-	},
-
-	_onDragEnd: function (e) {
-		var layer = e.target;
-		layer.edited = true;
-		this._map.fire(L.Draw.Event.EDITMOVE, {layer: layer});
-	},
-
-	_toggleMarkerHighlight: function () {
-		var icon = this._marker._icon;
-
-		// Don't do anything if this layer is a marker but doesn't have an icon. Markers
-		// should usually have icons. If using Leaflet.draw with Leaflet.markercluster there
-		// is a chance that a marker doesn't.
-		if (!icon) {
-			return;
-		}
-
-		// This is quite naughty, but I don't see another way of doing it. (short of setting a new icon)
-		icon.style.display = 'none';
-
-		if (L.DomUtil.hasClass(icon, 'leaflet-edit-marker-selected')) {
-			L.DomUtil.removeClass(icon, 'leaflet-edit-marker-selected');
-			// Offset as the border will make the icon move.
-			this._offsetMarker(icon, -4);
-
-		} else {
-			L.DomUtil.addClass(icon, 'leaflet-edit-marker-selected');
-			// Offset as the border will make the icon move.
-			this._offsetMarker(icon, 4);
-		}
-
-		icon.style.display = '';
-	},
-
-	_offsetMarker: function (icon, offset) {
-		var iconMarginTop = parseInt(icon.style.marginTop, 10) - offset,
-			iconMarginLeft = parseInt(icon.style.marginLeft, 10) - offset;
-
-		icon.style.marginTop = iconMarginTop + 'px';
-		icon.style.marginLeft = iconMarginLeft + 'px';
-	}
-});
-
-L.Marker.addInitHook(function () {
-	if (L.Edit.Marker) {
-		this.editing = new L.Edit.Marker(this);
-
-		if (this.options.editable) {
-			this.editing.enable();
-		}
-	}
-});
-
-
-
-L.Edit = L.Edit || {};
-
-/**
- * @class L.Edit.Polyline
- * @aka L.Edit.Poly
- * @aka Edit.Poly
- */
 L.Edit.Poly = L.Handler.extend({
-	// @method initialize(): void
-	initialize: function (poly) {
-
-		this.latlngs = [poly._latlngs];
-		if (poly._holes) {
-			this.latlngs = this.latlngs.concat(poly._holes);
-		}
-
-		this._poly = poly;
-
-		this._poly.on('revert-edited', this._updateLatLngs, this);
-	},
-
-	// Compatibility method to normalize Poly* objects
-	// between 0.7.x and 1.0+
-	_defaultShape: function () {
-		if (!L.Polyline._flat) {
-			return this._poly._latlngs;
-		}
-		return L.Polyline._flat(this._poly._latlngs) ? this._poly._latlngs : this._poly._latlngs[0];
-	},
-
-	_eachVertexHandler: function (callback) {
-		for (var i = 0; i < this._verticesHandlers.length; i++) {
-			callback(this._verticesHandlers[i]);
-		}
-	},
-
-	// @method addHooks(): void
-	// Add listener hooks to this handler
-	addHooks: function () {
-		this._initHandlers();
-		this._eachVertexHandler(function (handler) {
-			handler.addHooks();
-		});
-	},
-
-	// @method removeHooks(): void
-	// Remove listener hooks from this handler
-	removeHooks: function () {
-		this._eachVertexHandler(function (handler) {
-			handler.removeHooks();
-		});
-	},
-
-	// @method updateMarkers(): void
-	// Fire an update for each vertex handler
-	updateMarkers: function () {
-		this._eachVertexHandler(function (handler) {
-			handler.updateMarkers();
-		});
-	},
-
-	_initHandlers: function () {
-		this._verticesHandlers = [];
-		for (var i = 0; i < this.latlngs.length; i++) {
-			this._verticesHandlers.push(new L.Edit.PolyVerticesEdit(this._poly, this.latlngs[i], this._poly.options.poly));
-		}
-	},
-
-	_updateLatLngs: function (e) {
-		this.latlngs = [e.layer._latlngs];
-		if (e.layer._holes) {
-			this.latlngs = this.latlngs.concat(e.layer._holes);
-		}
-	}
-
-});
-
-/**
- * @class L.Edit.PolyVerticesEdit
- * @aka Edit.PolyVerticesEdit
- */
-L.Edit.PolyVerticesEdit = L.Handler.extend({
 	options: {
 		icon: new L.DivIcon({
 			iconSize: new L.Point(8, 8),
 			className: 'leaflet-div-icon leaflet-editing-icon'
-		}),
-		touchIcon: new L.DivIcon({
-			iconSize: new L.Point(20, 20),
-			className: 'leaflet-div-icon leaflet-editing-icon leaflet-touch-icon'
-		}),
-		drawError: {
-			color: '#b00b00',
-			timeout: 1000
-		}
-
-
+		})
 	},
 
-	// @method intialize(): void
-	initialize: function (poly, latlngs, options) {
-		// if touch, switch to touch icon
-		if (L.Browser.touch) {
-			this.options.icon = this.options.touchIcon;
-		}
+	initialize: function (poly, options) {
 		this._poly = poly;
-
-		if (options && options.drawError) {
-			options.drawError = L.Util.extend({}, this.options.drawError, options.drawError);
-		}
-
-		this._latlngs = latlngs;
-
 		L.setOptions(this, options);
 	},
 
-	// Compatibility method to normalize Poly* objects
-	// between 0.7.x and 1.0+
-	_defaultShape: function () {
-		if (!L.Polyline._flat) {
-			return this._latlngs;
-		}
-		return L.Polyline._flat(this._latlngs) ? this._latlngs : this._latlngs[0];
-	},
-
-	// @method addHooks(): void
-	// Add listener hooks to this handler.
 	addHooks: function () {
-		var poly = this._poly;
-		var path = poly._path;
-
-		if (!(poly instanceof L.Polygon)) {
-			poly.options.fill = false;
-			if (poly.options.editing) {
-				poly.options.editing.fill = false;
-			}
-		}
-
-		if (path) {
-			if (poly.options.editing.className) {
-				if (poly.options.original.className) {
-					poly.options.original.className.split(' ').forEach(function (className) {
-						L.DomUtil.removeClass(path, className);
-					});
-				}
-				poly.options.editing.className.split(' ').forEach(function (className) {
-					L.DomUtil.addClass(path, className);
-				});
-			}
-		}
-
-		poly.setStyle(poly.options.editing);
-
 		if (this._poly._map) {
-
-			this._map = this._poly._map; // Set map
-
 			if (!this._markerGroup) {
 				this._initMarkers();
 			}
@@ -1987,36 +1028,14 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 		}
 	},
 
-	// @method removeHooks(): void
-	// Remove listener hooks from this handler.
 	removeHooks: function () {
-		var poly = this._poly;
-		var path = poly._path;
-
-		if (path) {
-			if (poly.options.editing.className) {
-				poly.options.editing.className.split(' ').forEach(function (className) {
-					L.DomUtil.removeClass(path, className);
-				});
-				if (poly.options.original.className) {
-					poly.options.original.className.split(' ').forEach(function (className) {
-						L.DomUtil.addClass(path, className);
-					});
-				}
-			}
-		}
-
-		poly.setStyle(poly.options.original);
-
-		if (poly._map) {
-			poly._map.removeLayer(this._markerGroup);
+		if (this._poly._map) {
+			this._poly._map.removeLayer(this._markerGroup);
 			delete this._markerGroup;
 			delete this._markers;
 		}
 	},
 
-	// @method updateMarkers(): void
-	// Clear markers and update their location
 	updateMarkers: function () {
 		this._markerGroup.clearLayers();
 		this._initMarkers();
@@ -2028,21 +1047,22 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 		}
 		this._markers = [];
 
-		var latlngs = this._defaultShape(),
+		var latlngs = this._poly.getLatLngs(),
 			i, j, len, marker;
+
+		// TODO refactor holes implementation in Polygon to support it here
 
 		for (i = 0, len = latlngs.length; i < len; i++) {
 
 			marker = this._createMarker(latlngs[i], i);
 			marker.on('click', this._onMarkerClick, this);
-			marker.on('contextmenu', this._onContextMenu, this);
 			this._markers.push(marker);
 		}
 
 		var markerLeft, markerRight;
 
 		for (i = 0, j = len - 1; i < len; j = i++) {
-			if (i === 0 && !(L.Polygon && (this._poly instanceof L.Polygon))) {
+			if (i === 0 && !(L.GeodesicPolygon && (this._poly instanceof L.GeodesicPolygon))) {
 				continue;
 			}
 
@@ -2055,39 +1075,20 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 	},
 
 	_createMarker: function (latlng, index) {
-		// Extending L.Marker in TouchEvents.js to include touch.
-		var marker = new L.Marker.Touch(latlng, {
+		var marker = new L.Marker(latlng, {
 			draggable: true,
-			icon: this.options.icon,
+			icon: this.options.icon
 		});
 
 		marker._origLatLng = latlng;
 		marker._index = index;
 
-		marker
-			.on('dragstart', this._onMarkerDragStart, this)
-			.on('drag', this._onMarkerDrag, this)
-			.on('dragend', this._fireEdit, this)
-			.on('touchmove', this._onTouchMove, this)
-			.on('touchend', this._fireEdit, this)
-			.on('MSPointerMove', this._onTouchMove, this)
-			.on('MSPointerUp', this._fireEdit, this);
+		marker.on('drag', this._onMarkerDrag, this);
+		marker.on('dragend', this._fireEdit, this);
 
 		this._markerGroup.addLayer(marker);
 
 		return marker;
-	},
-
-	_onMarkerDragStart: function () {
-		this._poly.fire('editstart');
-	},
-
-	_spliceLatLngs: function () {
-		var latlngs = this._defaultShape();
-		var removed = [].splice.apply(latlngs, arguments);
-		this._poly._convertLatLngs(latlngs, true);
-		this._poly.redraw();
-		return removed;
 	},
 
 	_removeMarker: function (marker) {
@@ -2095,29 +1096,22 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 
 		this._markerGroup.removeLayer(marker);
 		this._markers.splice(i, 1);
-		this._spliceLatLngs(i, 1);
+		this._poly.spliceLatLngs(i, 1);
 		this._updateIndexes(i, -1);
 
 		marker
-			.off('dragstart', this._onMarkerDragStart, this)
 			.off('drag', this._onMarkerDrag, this)
 			.off('dragend', this._fireEdit, this)
-			.off('touchmove', this._onMarkerDrag, this)
-			.off('touchend', this._fireEdit, this)
-			.off('click', this._onMarkerClick, this)
-			.off('MSPointerMove', this._onTouchMove, this)
-			.off('MSPointerUp', this._fireEdit, this);
+			.off('click', this._onMarkerClick, this);
 	},
 
 	_fireEdit: function () {
 		this._poly.edited = true;
 		this._poly.fire('edit');
-		this._poly._map.fire(L.Draw.Event.EDITVERTEX, {layers: this._markerGroup, poly: this._poly});
 	},
 
 	_onMarkerDrag: function (e) {
 		var marker = e.target;
-		var poly = this._poly;
 
 		L.extend(marker._origLatLng, marker._latlng);
 
@@ -2128,59 +1122,14 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 			marker._middleRight.setLatLng(this._getMiddleLatLng(marker, marker._next));
 		}
 
-		if (poly.options.poly) {
-			var tooltip = poly._map._editTooltip; // Access the tooltip
-
-			// If we don't allow intersections and the polygon intersects
-			if (!poly.options.poly.allowIntersection && poly.intersects()) {
-
-				var originalColor = poly.options.color;
-				poly.setStyle({color: this.options.drawError.color});
-
-				// Manually trigger 'dragend' behavior on marker we are about to remove
-				// WORKAROUND: introduced in 1.0.0-rc2, may be related to #4484
-				if (L.version.indexOf('0.7') !== 0) {
-					marker.dragging._draggable._onUp(e);
-				}
-				this._onMarkerClick(e); // Remove violating marker
-				// FIXME: Reset the marker to it's original position (instead of remove)
-
-				if (tooltip) {
-					tooltip.updateContent({
-						text: L.drawLocal.draw.handlers.polyline.error
-					});
-				}
-
-				// Reset everything back to normal after a second
-				setTimeout(function () {
-					poly.setStyle({color: originalColor});
-					if (tooltip) {
-						tooltip.updateContent({
-							text: L.drawLocal.edit.handlers.edit.tooltip.text,
-							subtext: L.drawLocal.edit.handlers.edit.tooltip.subtext
-						});
-					}
-				}, 1000);
-			}
-		}
-		//refresh the bounds when draging
-		this._poly._bounds._southWest = L.latLng(Infinity, Infinity);
-		this._poly._bounds._northEast = L.latLng(-Infinity, -Infinity);
-		var latlngs = this._poly.getLatLngs();
-		this._poly._convertLatLngs(latlngs, true);
 		this._poly.redraw();
-		this._poly.fire('editdrag');
 	},
 
 	_onMarkerClick: function (e) {
+		// we want to remove the marker on click, but if latlng count < 3, polyline would be invalid
+		if (this._poly.getLatLngs().length < 3) { return; }
 
-		var minPoints = L.Polygon && (this._poly instanceof L.Polygon) ? 4 : 3,
-			marker = e.target;
-
-		// If removing this point would create an invalid polyline/polygon don't remove
-		if (this._defaultShape().length < minPoints) {
-			return;
-		}
+		var marker = e.target;
 
 		// remove the marker
 		this._removeMarker(marker);
@@ -2210,32 +1159,6 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 		this._fireEdit();
 	},
 
-	_onContextMenu: function (e) {
-		var marker = e.target;
-		var poly = this._poly;
-		this._poly._map.fire(L.Draw.Event.MARKERCONTEXT, {marker: marker, layers: this._markerGroup, poly: this._poly});
-		L.DomEvent.stopPropagation;
-	},
-
-	_onTouchMove: function (e) {
-
-		var layerPoint = this._map.mouseEventToLayerPoint(e.originalEvent.touches[0]),
-			latlng = this._map.layerPointToLatLng(layerPoint),
-			marker = e.target;
-
-		L.extend(marker._origLatLng, latlng);
-
-		if (marker._middleLeft) {
-			marker._middleLeft.setLatLng(this._getMiddleLatLng(marker._prev, marker));
-		}
-		if (marker._middleRight) {
-			marker._middleRight.setLatLng(this._getMiddleLatLng(marker, marker._next));
-		}
-
-		this._poly.redraw();
-		this.updateMarkers();
-	},
-
 	_updateIndexes: function (index, delta) {
 		this._markerGroup.eachLayer(function (marker) {
 			if (marker._index > index) {
@@ -2246,28 +1169,27 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 
 	_createMiddleMarker: function (marker1, marker2) {
 		var latlng = this._getMiddleLatLng(marker1, marker2),
-			marker = this._createMarker(latlng),
-			onClick,
-			onDragStart,
-			onDragEnd;
+		    marker = this._createMarker(latlng),
+		    onClick,
+		    onDragStart,
+		    onDragEnd;
 
 		marker.setOpacity(0.6);
 
 		marker1._middleRight = marker2._middleLeft = marker;
 
 		onDragStart = function () {
-			marker.off('touchmove', onDragStart, this);
 			var i = marker2._index;
 
 			marker._index = i;
 
 			marker
-				.off('click', onClick, this)
-				.on('click', this._onMarkerClick, this);
+			    .off('click', onClick, this)
+			    .on('click', this._onMarkerClick, this);
 
 			latlng.lat = marker.getLatLng().lat;
 			latlng.lng = marker.getLatLng().lng;
-			this._spliceLatLngs(i, 0, latlng);
+			this._poly.spliceLatLngs(i, 0, latlng);
 			this._markers.splice(i, 0, marker);
 
 			marker.setOpacity(1);
@@ -2276,14 +1198,11 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 			marker2._index++;
 			this._updatePrevNext(marker1, marker);
 			this._updatePrevNext(marker, marker2);
-
-			this._poly.fire('editstart');
 		};
 
 		onDragEnd = function () {
 			marker.off('dragstart', onDragStart, this);
 			marker.off('dragend', onDragEnd, this);
-			marker.off('touchmove', onDragStart, this);
 
 			this._createMiddleMarker(marker1, marker);
 			this._createMiddleMarker(marker, marker2);
@@ -2296,10 +1215,9 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 		};
 
 		marker
-			.on('click', onClick, this)
-			.on('dragstart', onDragStart, this)
-			.on('dragend', onDragEnd, this)
-			.on('touchmove', onDragStart, this);
+		    .on('click', onClick, this)
+		    .on('dragstart', onDragStart, this)
+		    .on('dragend', onDragEnd, this);
 
 		this._markerGroup.addLayer(marker);
 	},
@@ -2315,10 +1233,10 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 
 	_getMiddleLatLng: function (marker1, marker2) {
 		var map = this._poly._map,
-			p1 = map.project(marker1.getLatLng()),
-			p2 = map.project(marker2.getLatLng());
+		    p1 = map.latLngToLayerPoint(marker1.getLatLng()),
+		    p2 = map.latLngToLayerPoint(marker2.getLatLng());
 
-		return map.unproject(p1._add(p2)._divideBy(2));
+		return map.layerPointToLatLng(p1._add(p2)._divideBy(2));
 	}
 });
 
@@ -2330,7 +1248,6 @@ L.Polyline.addInitHook(function () {
 	}
 
 	if (L.Edit.Poly) {
-
 		this.editing = new L.Edit.Poly(this);
 
 		if (this.options.editable) {
@@ -2352,12 +1269,8 @@ L.Polyline.addInitHook(function () {
 });
 
 
-
 L.Edit = L.Edit || {};
-/**
- * @class L.Edit.SimpleShape
- * @aka Edit.SimpleShape
- */
+
 L.Edit.SimpleShape = L.Handler.extend({
 	options: {
 		moveIcon: new L.DivIcon({
@@ -2367,55 +1280,27 @@ L.Edit.SimpleShape = L.Handler.extend({
 		resizeIcon: new L.DivIcon({
 			iconSize: new L.Point(8, 8),
 			className: 'leaflet-div-icon leaflet-editing-icon leaflet-edit-resize'
-		}),
-		touchMoveIcon: new L.DivIcon({
-			iconSize: new L.Point(20, 20),
-			className: 'leaflet-div-icon leaflet-editing-icon leaflet-edit-move leaflet-touch-icon'
-		}),
-		touchResizeIcon: new L.DivIcon({
-			iconSize: new L.Point(20, 20),
-			className: 'leaflet-div-icon leaflet-editing-icon leaflet-edit-resize leaflet-touch-icon'
-		}),
+		})
 	},
 
-	// @method intialize(): void
 	initialize: function (shape, options) {
-		// if touch, switch to touch icon
-		if (L.Browser.touch) {
-			this.options.moveIcon = this.options.touchMoveIcon;
-			this.options.resizeIcon = this.options.touchResizeIcon;
-		}
-
 		this._shape = shape;
 		L.Util.setOptions(this, options);
 	},
 
-	// @method addHooks(): void
-	// Add listener hooks to this handler
 	addHooks: function () {
-		var shape = this._shape;
 		if (this._shape._map) {
 			this._map = this._shape._map;
-			shape.setStyle(shape.options.editing);
 
-			if (shape._map) {
-				this._map = shape._map;
-				if (!this._markerGroup) {
-					this._initMarkers();
-				}
-				this._map.addLayer(this._markerGroup);
+			if (!this._markerGroup) {
+				this._initMarkers();
 			}
+			this._map.addLayer(this._markerGroup);
 		}
 	},
 
-	// @method removeHooks(): void
-	// Remove listener hooks from this handler
 	removeHooks: function () {
-		var shape = this._shape;
-
-		shape.setStyle(shape.options.original);
-
-		if (shape._map) {
+		if (this._shape._map) {
 			this._unbindMarker(this._moveMarker);
 
 			for (var i = 0, l = this._resizeMarkers.length; i < l; i++) {
@@ -2430,8 +1315,6 @@ L.Edit.SimpleShape = L.Handler.extend({
 		this._map = null;
 	},
 
-	// @method updateMarkers(): void
-	// Remove the edit markers from this layer
 	updateMarkers: function () {
 		this._markerGroup.clearLayers();
 		this._initMarkers();
@@ -2458,8 +1341,7 @@ L.Edit.SimpleShape = L.Handler.extend({
 	},
 
 	_createMarker: function (latlng, icon) {
-		// Extending L.Marker in TouchEvents.js to include touch.
-		var marker = new L.Marker.Touch(latlng, {
+		var marker = new L.Marker(latlng, {
 			draggable: true,
 			icon: icon,
 			zIndexOffset: 10
@@ -2476,31 +1358,19 @@ L.Edit.SimpleShape = L.Handler.extend({
 		marker
 			.on('dragstart', this._onMarkerDragStart, this)
 			.on('drag', this._onMarkerDrag, this)
-			.on('dragend', this._onMarkerDragEnd, this)
-			.on('touchstart', this._onTouchStart, this)
-			.on('touchmove', this._onTouchMove, this)
-			.on('MSPointerMove', this._onTouchMove, this)
-			.on('touchend', this._onTouchEnd, this)
-			.on('MSPointerUp', this._onTouchEnd, this);
+			.on('dragend', this._onMarkerDragEnd, this);
 	},
 
 	_unbindMarker: function (marker) {
 		marker
 			.off('dragstart', this._onMarkerDragStart, this)
 			.off('drag', this._onMarkerDrag, this)
-			.off('dragend', this._onMarkerDragEnd, this)
-			.off('touchstart', this._onTouchStart, this)
-			.off('touchmove', this._onTouchMove, this)
-			.off('MSPointerMove', this._onTouchMove, this)
-			.off('touchend', this._onTouchEnd, this)
-			.off('MSPointerUp', this._onTouchEnd, this);
+			.off('dragend', this._onMarkerDragEnd, this);
 	},
 
 	_onMarkerDragStart: function (e) {
 		var marker = e.target;
 		marker.setOpacity(0);
-
-		this._shape.fire('editstart');
 	},
 
 	_fireEdit: function () {
@@ -2519,58 +1389,13 @@ L.Edit.SimpleShape = L.Handler.extend({
 		}
 
 		this._shape.redraw();
-		this._shape.fire('editdrag');
 	},
 
 	_onMarkerDragEnd: function (e) {
 		var marker = e.target;
 		marker.setOpacity(1);
 
-		this._fireEdit();
-	},
-
-	_onTouchStart: function (e) {
-		L.Edit.SimpleShape.prototype._onMarkerDragStart.call(this, e);
-
-		if (typeof(this._getCorners) === 'function') {
-			// Save a reference to the opposite point
-			var corners = this._getCorners(),
-				marker = e.target,
-				currentCornerIndex = marker._cornerIndex;
-
-			marker.setOpacity(0);
-
-			// Copyed from Edit.Rectangle.js line 23 _onMarkerDragStart()
-			// Latlng is null otherwise.
-			this._oppositeCorner = corners[(currentCornerIndex + 2) % 4];
-			this._toggleCornerMarkers(0, currentCornerIndex);
-		}
-
-		this._shape.fire('editstart');
-	},
-
-	_onTouchMove: function (e) {
-		var layerPoint = this._map.mouseEventToLayerPoint(e.originalEvent.touches[0]),
-			latlng = this._map.layerPointToLatLng(layerPoint),
-			marker = e.target;
-
-		if (marker === this._moveMarker) {
-			this._move(latlng);
-		} else {
-			this._resize(latlng);
-		}
-
-		this._shape.redraw();
-
-		// prevent touchcancel in IOS
-		// e.preventDefault();
-		return false;
-	},
-
-	_onTouchEnd: function (e) {
-		var marker = e.target;
-		marker.setOpacity(1);
-		this.updateMarkers();
+		this._shape.fire('edit');
 		this._fireEdit();
 	},
 
@@ -2583,14 +1408,8 @@ L.Edit.SimpleShape = L.Handler.extend({
 	}
 });
 
-
-
 L.Edit = L.Edit || {};
-/**
- * @class L.Edit.Rectangle
- * @aka Edit.Rectangle
- * @inherits L.Edit.SimpleShape
- */
+
 L.Edit.Rectangle = L.Edit.SimpleShape.extend({
 	_createMoveMarker: function () {
 		var bounds = this._shape.getBounds(),
@@ -2644,7 +1463,7 @@ L.Edit.Rectangle = L.Edit.SimpleShape.extend({
 	},
 
 	_move: function (newCenter) {
-		var latlngs = this._shape._defaultShape ? this._shape._defaultShape() : this._shape.getLatLngs(),
+		var latlngs = this._shape.getLatLngs(),
 			bounds = this._shape.getBounds(),
 			center = bounds.getCenter(),
 			offset, newLatLngs = [];
@@ -2657,10 +1476,8 @@ L.Edit.Rectangle = L.Edit.SimpleShape.extend({
 
 		this._shape.setLatLngs(newLatLngs);
 
-		// Reposition the resize markers
+		// Respoition the resize markers
 		this._repositionCornerMarkers();
-
-		this._map.fire(L.Draw.Event.EDITMOVE, {layer: this._shape});
 	},
 
 	_resize: function (latlng) {
@@ -2669,11 +1486,9 @@ L.Edit.Rectangle = L.Edit.SimpleShape.extend({
 		// Update the shape based on the current position of this corner and the opposite point
 		this._shape.setBounds(L.latLngBounds(latlng, this._oppositeCorner));
 
-		// Reposition the move marker
+		// Respoition the move marker
 		bounds = this._shape.getBounds();
 		this._moveMarker.setLatLng(bounds.getCenter());
-
-		this._map.fire(L.Draw.Event.EDITRESIZE, {layer: this._shape});
 	},
 
 	_getCorners: function () {
@@ -2711,71 +1526,14 @@ L.Rectangle.addInitHook(function () {
 	}
 });
 
-
-
 L.Edit = L.Edit || {};
-/**
- * @class L.Edit.CircleMarker
- * @aka Edit.Circle
- * @inherits L.Edit.SimpleShape
- */
-L.Edit.CircleMarker = L.Edit.SimpleShape.extend({
+
+L.Edit.Circle = L.Edit.SimpleShape.extend({
 	_createMoveMarker: function () {
 		var center = this._shape.getLatLng();
 
 		this._moveMarker = this._createMarker(center, this.options.moveIcon);
 	},
-
-	_createResizeMarker: function () {
-		// To avoid an undefined check in L.Edit.SimpleShape.removeHooks
-		this._resizeMarkers = [];
-	},
-
-	_move: function (latlng) {
-		if (this._resizeMarkers.length) {
-			var resizemarkerPoint = this._getResizeMarkerPoint(latlng);
-			// Move the resize marker
-			this._resizeMarkers[0].setLatLng(resizemarkerPoint);
-		}
-
-		// Move the circle
-		this._shape.setLatLng(latlng);
-
-		this._map.fire(L.Draw.Event.EDITMOVE, {layer: this._shape});
-	},
-});
-
-L.CircleMarker.addInitHook(function () {
-	if (L.Edit.CircleMarker) {
-		this.editing = new L.Edit.CircleMarker(this);
-
-		if (this.options.editable) {
-			this.editing.enable();
-		}
-	}
-
-	this.on('add', function () {
-		if (this.editing && this.editing.enabled()) {
-			this.editing.addHooks();
-		}
-	});
-
-	this.on('remove', function () {
-		if (this.editing && this.editing.enabled()) {
-			this.editing.removeHooks();
-		}
-	});
-});
-
-
-
-L.Edit = L.Edit || {};
-/**
- * @class L.Edit.Circle
- * @aka Edit.Circle
- * @inherits L.Edit.CircleMarker
- */
-L.Edit.Circle = L.Edit.CircleMarker.extend({
 
 	_createResizeMarker: function () {
 		var center = this._shape.getLatLng(),
@@ -2786,32 +1544,25 @@ L.Edit.Circle = L.Edit.CircleMarker.extend({
 	},
 
 	_getResizeMarkerPoint: function (latlng) {
-		// From L.shape.getBounds()
-		var delta = this._shape._radius * Math.cos(Math.PI / 4),
-			point = this._map.project(latlng);
-		return this._map.unproject([point.x + delta, point.y - delta]);
+                var latRadius = (this._shape.getRadius() / 40075017) * 360;
+		return L.latLng(latlng.lat+latRadius,latlng.lng);
+	},
+
+	_move: function (latlng) {
+		var resizemarkerPoint = this._getResizeMarkerPoint(latlng);
+
+		// Move the resize marker
+		this._resizeMarkers[0].setLatLng(resizemarkerPoint);
+
+		// Move the circle
+		this._shape.setLatLng(latlng);
 	},
 
 	_resize: function (latlng) {
-		var moveLatLng = this._moveMarker.getLatLng();
-
-		// Calculate the radius based on the version
-		if (L.GeometryUtil.isVersion07x()) {
+		var moveLatLng = this._moveMarker.getLatLng(),
 			radius = moveLatLng.distanceTo(latlng);
-		} else {
-			radius = this._map.distance(moveLatLng, latlng);
-		}
-		this._shape.setRadius(radius);
-
-		this._map._editTooltip.updateContent({
-			text: L.drawLocal.edit.handlers.edit.tooltip.subtext + '<br />' + L.drawLocal.edit.handlers.edit.tooltip.text,
-			subtext: L.drawLocal.draw.handlers.circle.radius + ': ' +
-			L.GeometryUtil.readableDistance(radius, true, this.options.feet, this.options.nautic)
-		});
 
 		this._shape.setRadius(radius);
-
-		this._map.fire(L.Draw.Event.EDITRESIZE, {layer: this._shape});
 	}
 });
 
@@ -2837,497 +1588,124 @@ L.Circle.addInitHook(function () {
 	});
 });
 
+L.GeodesicCircle.addInitHook(function () {
+	if (L.Edit.Circle) {
+		this.editing = new L.Edit.Circle(this);
 
-
-L.Map.mergeOptions({
-	touchExtend: true
-});
-
-/**
- * @class L.Map.TouchExtend
- * @aka TouchExtend
- */
-L.Map.TouchExtend = L.Handler.extend({
-
-	// @method initialize(): void
-	// Sets TouchExtend private accessor variables
-	initialize: function (map) {
-		this._map = map;
-		this._container = map._container;
-		this._pane = map._panes.overlayPane;
-	},
-
-	// @method addHooks(): void
-	// Adds dom listener events to the map container
-	addHooks: function () {
-		L.DomEvent.on(this._container, 'touchstart', this._onTouchStart, this);
-		L.DomEvent.on(this._container, 'touchend', this._onTouchEnd, this);
-		L.DomEvent.on(this._container, 'touchmove', this._onTouchMove, this);
-		if (this._detectIE()) {
-			L.DomEvent.on(this._container, 'MSPointerDown', this._onTouchStart, this);
-			L.DomEvent.on(this._container, 'MSPointerUp', this._onTouchEnd, this);
-			L.DomEvent.on(this._container, 'MSPointerMove', this._onTouchMove, this);
-			L.DomEvent.on(this._container, 'MSPointerCancel', this._onTouchCancel, this);
-
-		} else {
-			L.DomEvent.on(this._container, 'touchcancel', this._onTouchCancel, this);
-			L.DomEvent.on(this._container, 'touchleave', this._onTouchLeave, this);
+		if (this.options.editable) {
+			this.editing.enable();
 		}
-	},
-
-	// @method removeHooks(): void
-	// Removes dom listener events from the map container
-	removeHooks: function () {
-		L.DomEvent.off(this._container, 'touchstart', this._onTouchStart);
-		L.DomEvent.off(this._container, 'touchend', this._onTouchEnd);
-		L.DomEvent.off(this._container, 'touchmove', this._onTouchMove);
-		if (this._detectIE()) {
-			L.DomEvent.off(this._container, 'MSPointerDowm', this._onTouchStart);
-			L.DomEvent.off(this._container, 'MSPointerUp', this._onTouchEnd);
-			L.DomEvent.off(this._container, 'MSPointerMove', this._onTouchMove);
-			L.DomEvent.off(this._container, 'MSPointerCancel', this._onTouchCancel);
-		} else {
-			L.DomEvent.off(this._container, 'touchcancel', this._onTouchCancel);
-			L.DomEvent.off(this._container, 'touchleave', this._onTouchLeave);
-		}
-	},
-
-	_touchEvent: function (e, type) {
-		// #TODO: fix the pageX error that is do a bug in Android where a single touch triggers two click events
-		// _filterClick is what leaflet uses as a workaround.
-		// This is a problem with more things than just android. Another problem is touchEnd has no touches in
-		// its touch list.
-		var touchEvent = {};
-		if (typeof e.touches !== 'undefined') {
-			if (!e.touches.length) {
-				return;
-			}
-			touchEvent = e.touches[0];
-		} else if (e.pointerType === 'touch') {
-			touchEvent = e;
-			if (!this._filterClick(e)) {
-				return;
-			}
-		} else {
-			return;
-		}
-
-		var containerPoint = this._map.mouseEventToContainerPoint(touchEvent),
-			layerPoint = this._map.mouseEventToLayerPoint(touchEvent),
-			latlng = this._map.layerPointToLatLng(layerPoint);
-
-		this._map.fire(type, {
-			latlng: latlng,
-			layerPoint: layerPoint,
-			containerPoint: containerPoint,
-			pageX: touchEvent.pageX,
-			pageY: touchEvent.pageY,
-			originalEvent: e
-		});
-	},
-
-	/** Borrowed from Leaflet and modified for bool ops **/
-	_filterClick: function (e) {
-		var timeStamp = (e.timeStamp || e.originalEvent.timeStamp),
-			elapsed = L.DomEvent._lastClick && (timeStamp - L.DomEvent._lastClick);
-
-		// are they closer together than 500ms yet more than 100ms?
-		// Android typically triggers them ~300ms apart while multiple listeners
-		// on the same event should be triggered far faster;
-		// or check if click is simulated on the element, and if it is, reject any non-simulated events
-		if ((elapsed && elapsed > 100 && elapsed < 500) || (e.target._simulatedClick && !e._simulated)) {
-			L.DomEvent.stop(e);
-			return false;
-		}
-		L.DomEvent._lastClick = timeStamp;
-		return true;
-	},
-
-	_onTouchStart: function (e) {
-		if (!this._map._loaded) {
-			return;
-		}
-
-		var type = 'touchstart';
-		this._touchEvent(e, type);
-
-	},
-
-	_onTouchEnd: function (e) {
-		if (!this._map._loaded) {
-			return;
-		}
-
-		var type = 'touchend';
-		this._touchEvent(e, type);
-	},
-
-	_onTouchCancel: function (e) {
-		if (!this._map._loaded) {
-			return;
-		}
-
-		var type = 'touchcancel';
-		if (this._detectIE()) {
-			type = 'pointercancel';
-		}
-		this._touchEvent(e, type);
-	},
-
-	_onTouchLeave: function (e) {
-		if (!this._map._loaded) {
-			return;
-		}
-
-		var type = 'touchleave';
-		this._touchEvent(e, type);
-	},
-
-	_onTouchMove: function (e) {
-		if (!this._map._loaded) {
-			return;
-		}
-
-		var type = 'touchmove';
-		this._touchEvent(e, type);
-	},
-
-	_detectIE: function () {
-		var ua = window.navigator.userAgent;
-
-		var msie = ua.indexOf('MSIE ');
-		if (msie > 0) {
-			// IE 10 or older => return version number
-			return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
-		}
-
-		var trident = ua.indexOf('Trident/');
-		if (trident > 0) {
-			// IE 11 => return version number
-			var rv = ua.indexOf('rv:');
-			return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
-		}
-
-		var edge = ua.indexOf('Edge/');
-		if (edge > 0) {
-			// IE 12 => return version number
-			return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
-		}
-
-		// other browser
-		return false;
 	}
+
+	this.on('add', function () {
+		if (this.editing && this.editing.enabled()) {
+			this.editing.addHooks();
+		}
+	});
+
+	this.on('remove', function () {
+		if (this.editing && this.editing.enabled()) {
+			this.editing.removeHooks();
+		}
+	});
 });
 
-L.Map.addInitHook('addHandler', 'touchExtend', L.Map.TouchExtend);
-
-
-/**
- * @class L.Marker.Touch
- * @aka Marker.Touch
- *
- * This isn't full Touch support. This is just to get markers to also support dom touch events after creation
- * #TODO: find a better way of getting markers to support touch.
+/*
+ * L.LatLngUtil contains different utility functions for LatLngs.
  */
-L.Marker.Touch = L.Marker.extend({
 
-	_initInteraction: function () {
-		if (!this.addInteractiveTarget) {
-			// 0.7.x support
-			return this._initInteractionLegacy();
-		}
-		// TODO this may need be updated to re-add touch events for 1.0+
-		return L.Marker.prototype._initInteraction.apply(this);
-	},
-
-	// This is an exact copy of https://github.com/Leaflet/Leaflet/blob/v0.7/src/layer/marker/Marker.js
-	// with the addition of the touch events
-	_initInteractionLegacy: function () {
-
-		if (!this.options.clickable) {
-			return;
-		}
-
-		// TODO refactor into something shared with Map/Path/etc. to DRY it up
-
-		var icon = this._icon,
-			events = ['dblclick',
-				'mousedown',
-				'mouseover',
-				'mouseout',
-				'contextmenu',
-				'touchstart',
-				'touchend',
-				'touchmove'];
-		if (this._detectIE) {
-			events.concat(['MSPointerDown',
-				'MSPointerUp',
-				'MSPointerMove',
-				'MSPointerCancel']);
-		} else {
-			events.concat(['touchcancel']);
-		}
-
-		L.DomUtil.addClass(icon, 'leaflet-clickable');
-		L.DomEvent.on(icon, 'click', this._onMouseClick, this);
-		L.DomEvent.on(icon, 'keypress', this._onKeyPress, this);
-
-		for (var i = 0; i < events.length; i++) {
-			L.DomEvent.on(icon, events[i], this._fireMouseEvent, this);
-		}
-
-		if (L.Handler.MarkerDrag) {
-			this.dragging = new L.Handler.MarkerDrag(this);
-
-			if (this.options.draggable) {
-				this.dragging.enable();
-			}
-		}
-	},
-
-	_detectIE: function () {
-		var ua = window.navigator.userAgent;
-
-		var msie = ua.indexOf('MSIE ');
-		if (msie > 0) {
-			// IE 10 or older => return version number
-			return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
-		}
-
-		var trident = ua.indexOf('Trident/');
-		if (trident > 0) {
-			// IE 11 => return version number
-			var rv = ua.indexOf('rv:');
-			return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
-		}
-
-		var edge = ua.indexOf('Edge/');
-		if (edge > 0) {
-			// IE 12 => return version number
-			return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
-		}
-
-		// other browser
-		return false;
-	}
-});
-
-
-
-/**
- * @class L.LatLngUtil
- * @aka LatLngUtil
- */
 L.LatLngUtil = {
 	// Clones a LatLngs[], returns [][]
-
-	// @method cloneLatLngs(LatLngs[]): L.LatLngs[]
-	// Clone the latLng point or points or nested points and return an array with those points
 	cloneLatLngs: function (latlngs) {
 		var clone = [];
 		for (var i = 0, l = latlngs.length; i < l; i++) {
-			// Check for nested array (Polyline/Polygon)
-			if (Array.isArray(latlngs[i])) {
-				clone.push(L.LatLngUtil.cloneLatLngs(latlngs[i]));
-			} else {
-				clone.push(this.cloneLatLng(latlngs[i]));
-			}
+			clone.push(this.cloneLatLng(latlngs[i]));
 		}
 		return clone;
 	},
 
-	// @method cloneLatLng(LatLng): L.LatLng
-	// Clone the latLng and return a new LatLng object.
 	cloneLatLng: function (latlng) {
 		return L.latLng(latlng.lat, latlng.lng);
 	}
 };
 
+L.GeometryUtil = {
+	// Ported from the OpenLayers implementation. See https://github.com/openlayers/openlayers/blob/master/lib/OpenLayers/Geometry/LinearRing.js#L270
+	geodesicArea: function (latLngs) {
+		var pointsCount = latLngs.length,
+			area = 0.0,
+			d2r = L.LatLng.DEG_TO_RAD,
+			p1, p2;
 
-
-(function () {
-
-	var defaultPrecision = {
-		km: 2,
-		ha: 2,
-		m: 0,
-		mi: 2,
-		ac: 2,
-		yd: 0,
-		ft: 0,
-		nm: 2
-	};
-
-
-	/**
-	 * @class L.GeometryUtil
-	 * @aka GeometryUtil
-	 */
-	L.GeometryUtil = L.extend(L.GeometryUtil || {}, {
-		// Ported from the OpenLayers implementation. See https://github.com/openlayers/openlayers/blob/master/lib/OpenLayers/Geometry/LinearRing.js#L270
-
-		// @method geodesicArea(): number
-		geodesicArea: function (latLngs) {
-			var pointsCount = latLngs.length,
-				area = 0.0,
-				d2r = Math.PI / 180,
-				p1, p2;
-
-			if (pointsCount > 2) {
-				for (var i = 0; i < pointsCount; i++) {
-					p1 = latLngs[i];
-					p2 = latLngs[(i + 1) % pointsCount];
-					area += ((p2.lng - p1.lng) * d2r) *
+		if (pointsCount > 2) {
+			for (var i = 0; i < pointsCount; i++) {
+				p1 = latLngs[i];
+				p2 = latLngs[(i + 1) % pointsCount];
+				area += ((p2.lng - p1.lng) * d2r) *
 						(2 + Math.sin(p1.lat * d2r) + Math.sin(p2.lat * d2r));
-				}
-				area = area * 6378137.0 * 6378137.0 / 2.0;
 			}
+			area = area * 6367000.0 * 6367000.0 / 2.0;
+		}
 
-			return Math.abs(area);
-		},
+		return Math.abs(area);
+	},
 
-		// @method formattedNumber(n, precision): string
-		// Returns n in specified number format (if defined) and precision
-		formattedNumber: function (n, precision) {
-			var formatted = parseFloat(n).toFixed(precision),
-				format = L.drawLocal.format && L.drawLocal.format.numeric,
-				delimiters = format && format.delimiters,
-				thousands = delimiters && delimiters.thousands,
-				decimal = delimiters && delimiters.decimal;
+	readableArea: function (area, isMetric) {
+		var areaStr;
 
-			if (thousands || decimal) {
-				var splitValue = formatted.split('.');
-				formatted = thousands ? splitValue[0].replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1' + thousands) : splitValue[0];
-				decimal = decimal || '.';
-				if (splitValue.length > 1) {
-					formatted = formatted + decimal + splitValue[1];
-				}
-			}
-
-			return formatted;
-		},
-
-		// @method readableArea(area, isMetric, precision): string
-		// Returns a readable area string in yards or metric.
-		// The value will be rounded as defined by the precision option object.
-		readableArea: function (area, isMetric, precision) {
-			var areaStr,
-				units,
-				precision = L.Util.extend({}, defaultPrecision, precision);
-
-			if (isMetric) {
-				units = ['ha', 'm'];
-				type = typeof isMetric;
-				if (type === 'string') {
-					units = [isMetric];
-				} else if (type !== 'boolean') {
-					units = isMetric;
-				}
-
-				if (area >= 1000000 && units.indexOf('km') !== -1) {
-					areaStr = L.GeometryUtil.formattedNumber(area * 0.000001, precision['km']) + ' km²';
-				} else if (area >= 10000 && units.indexOf('ha') !== -1) {
-					areaStr = L.GeometryUtil.formattedNumber(area * 0.0001, precision['ha']) + ' ha';
-				} else {
-					areaStr = L.GeometryUtil.formattedNumber(area, precision['m']) + ' m²';
-				}
+		if (isMetric) {
+			if (area >= 10000) {
+				areaStr = (area * 0.0001).toFixed(2) + ' ha';
 			} else {
-				area /= 0.836127; // Square yards in 1 meter
-
-				if (area >= 3097600) { //3097600 square yards in 1 square mile
-					areaStr = L.GeometryUtil.formattedNumber(area / 3097600, precision['mi']) + ' mi²';
-				} else if (area >= 4840) { //4840 square yards in 1 acre
-					areaStr = L.GeometryUtil.formattedNumber(area / 4840, precision['ac']) + ' acres';
-				} else {
-					areaStr = L.GeometryUtil.formattedNumber(area, precision['yd']) + ' yd²';
-				}
+				areaStr = area.toFixed(2) + ' m&sup2;';
 			}
+		} else {
+			area *= 0.836127; // Square yards in 1 meter
 
-			return areaStr;
-		},
-
-		// @method readableDistance(distance, units): string
-		// Converts a metric distance to one of [ feet, nauticalMile, metric or yards ] string
-		//
-		// @alternative
-		// @method readableDistance(distance, isMetric, useFeet, isNauticalMile, precision): string
-		// Converts metric distance to distance string.
-		// The value will be rounded as defined by the precision option object.
-		readableDistance: function (distance, isMetric, isFeet, isNauticalMile, precision) {
-			var distanceStr,
-				units,
-				precision = L.Util.extend({}, defaultPrecision, precision);
-
-			if (isMetric) {
-				units = typeof isMetric == 'string' ? isMetric : 'metric';
-			} else if (isFeet) {
-				units = 'feet';
-			} else if (isNauticalMile) {
-				units = 'nauticalMile';
+			if (area >= 3097600) { //3097600 square yards in 1 square mile
+				areaStr = (area / 3097600).toFixed(2) + ' mi&sup2;';
+			} else if (area >= 4840) {//48040 square yards in 1 acre
+				areaStr = (area / 4840).toFixed(2) + ' acres';
 			} else {
-				units = 'yards';
+				areaStr = Math.ceil(area) + ' yd&sup2;';
 			}
+		}
 
-			switch (units) {
-				case 'metric':
-					// show metres when distance is < 1km, then show km
-					if (distance > 1000) {
-						distanceStr = L.GeometryUtil.formattedNumber(distance / 1000, precision['km']) + ' km';
-					} else {
-						distanceStr = L.GeometryUtil.formattedNumber(distance, precision['m']) + ' m';
-					}
-					break;
-				case 'feet':
-					distance *= 1.09361 * 3;
-					distanceStr = L.GeometryUtil.formattedNumber(distance, precision['ft']) + ' ft';
+		return areaStr;
+	},
 
-					break;
-				case 'nauticalMile':
-					distance *= 0.53996;
-					distanceStr = L.GeometryUtil.formattedNumber(distance / 1000, precision['nm']) + ' nm';
-					break;
-				case 'yards':
-				default:
-					distance *= 1.09361;
+	readableDistance: function (distance, isMetric) {
+		var distanceStr;
 
-					if (distance > 1760) {
-						distanceStr = L.GeometryUtil.formattedNumber(distance / 1760, precision['mi']) + ' miles';
-					} else {
-						distanceStr = L.GeometryUtil.formattedNumber(distance, precision['yd']) + ' yd';
-					}
-					break;
+		if (isMetric) {
+			// show metres when distance is < 1km, then show km
+			if (distance > 1000) {
+				distanceStr = (distance  / 1000).toFixed(2) + ' km';
+			} else {
+				distanceStr = Math.ceil(distance) + ' m';
 			}
-			return distanceStr;
-		},
+		} else {
+			distance *= 1.09361;
 
-		// @method isVersion07x(): boolean
-		// Returns true if the Leaflet version is 0.7.x, false otherwise.
-		isVersion07x: function () {
-			var version = L.version.split('.');
-			//If Version is == 0.7.*
-			return parseInt(version[0], 10) === 0 && parseInt(version[1], 10) === 7;
-		},
-	});
+			if (distance > 1760) {
+				distanceStr = (distance / 1760).toFixed(2) + ' miles';
+			} else {
+				distanceStr = Math.ceil(distance) + ' yd';
+			}
+		}
 
-})();
+		return distanceStr;
+	}
+};
 
-
-
-/**
- * @class L.LineUtil
- * @aka Util
- * @aka L.Utils
- */
 L.Util.extend(L.LineUtil, {
-
-	// @method segmentsIntersect(): boolean
 	// Checks to see if two line segments intersect. Does not handle degenerate cases.
 	// http://compgeom.cs.uiuc.edu/~jeffe/teaching/373/notes/x06-sweepline.pdf
 	segmentsIntersect: function (/*Point*/ p, /*Point*/ p1, /*Point*/ p2, /*Point*/ p3) {
-		return this._checkCounterclockwise(p, p2, p3) !==
-			this._checkCounterclockwise(p1, p2, p3) &&
-			this._checkCounterclockwise(p, p1, p2) !==
-			this._checkCounterclockwise(p, p1, p3);
+		return	this._checkCounterclockwise(p, p2, p3) !==
+				this._checkCounterclockwise(p1, p2, p3) &&
+				this._checkCounterclockwise(p, p1, p2) !==
+				this._checkCounterclockwise(p, p1, p3);
 	},
 
 	// check to see if points are in counterclockwise order
@@ -3336,19 +1714,11 @@ L.Util.extend(L.LineUtil, {
 	}
 });
 
-
-
-/**
- * @class L.Polyline
- * @aka Polyline
- */
 L.Polyline.include({
-
-	// @method intersects(): boolean
 	// Check to see if this polyline has any linesegments that intersect.
 	// NOTE: does not support detecting intersection for degenerate cases.
 	intersects: function () {
-		var points = this._getProjectedPoints(),
+		var points = this._originalPoints,
 			len = points ? points.length : 0,
 			i, p, p1;
 
@@ -3369,7 +1739,6 @@ L.Polyline.include({
 		return false;
 	},
 
-	// @method newLatLngIntersects(): boolean
 	// Check for intersection if new latlng was added to this polyline.
 	// NOTE: does not support detecting intersection for degenerate cases.
 	newLatLngIntersects: function (latlng, skipFirst) {
@@ -3381,15 +1750,14 @@ L.Polyline.include({
 		return this.newPointIntersects(this._map.latLngToLayerPoint(latlng), skipFirst);
 	},
 
-	// @method newPointIntersects(): boolean
 	// Check for intersection if new point was added to this polyline.
 	// newPoint must be a layer point.
 	// NOTE: does not support detecting intersection for degenerate cases.
 	newPointIntersects: function (newPoint, skipFirst) {
-		var points = this._getProjectedPoints(),
+		var points = this._originalPoints,
 			len = points ? points.length : 0,
 			lastPoint = points ? points[len - 1] : null,
-			// The previous previous line segment. Previous line segment doesn't need testing.
+			// The previous previous line segment. Previous line segement doesn't need testing.
 			maxIndex = len - 2;
 
 		if (this._tooFewPointsForIntersection(1)) {
@@ -3402,18 +1770,18 @@ L.Polyline.include({
 	// Polylines with 2 sides can only intersect in cases where points are collinear (we don't support detecting these).
 	// Cannot have intersection when < 3 line segments (< 4 points)
 	_tooFewPointsForIntersection: function (extraPoints) {
-		var points = this._getProjectedPoints(),
+		var points = this._originalPoints,
 			len = points ? points.length : 0;
 		// Increment length by extraPoints if present
 		len += extraPoints || 0;
 
-		return !points || len <= 3;
+		return !this._originalPoints || len <= 3;
 	},
 
-	// Checks a line segment intersections with any line segments before its predecessor.
+	// Checks a line segment intersections with any line segements before its predecessor.
 	// Don't need to check the predecessor as will never intersect.
 	_lineSegmentsIntersectsRange: function (p, p1, maxIndex, minIndex) {
-		var points = this._getProjectedPoints(),
+		var points = this._originalPoints,
 			p2, p3;
 
 		minIndex = minIndex || 0;
@@ -3429,35 +1797,14 @@ L.Polyline.include({
 		}
 
 		return false;
-	},
-
-	_getProjectedPoints: function () {
-		if (!this._defaultShape) {
-			return this._originalPoints;
-		}
-		var points = [],
-			_shape = this._defaultShape();
-
-		for (var i = 0; i < _shape.length; i++) {
-			points.push(this._map.latLngToLayerPoint(_shape[i]));
-		}
-		return points;
 	}
 });
 
-
-
-/**
- * @class L.Polygon
- * @aka Polygon
- */
 L.Polygon.include({
-
-	// @method intersects(): boolean
 	// Checks a polygon for any intersecting line segments. Ignores holes.
 	intersects: function () {
 		var polylineIntersects,
-			points = this._getProjectedPoints(),
+			points = this._originalPoints,
 			len, firstPoint, lastPoint, maxIndex;
 
 		if (this._tooFewPointsForIntersection()) {
@@ -3481,57 +1828,45 @@ L.Polygon.include({
 	}
 });
 
-
-
-/**
- * @class L.Control.Draw
- * @aka L.Draw
- */
 L.Control.Draw = L.Control.extend({
 
-	// Options
 	options: {
 		position: 'topleft',
 		draw: {},
 		edit: false
 	},
 
-	// @method initialize(): void
-	// Initializes draw control, toolbars from the options
 	initialize: function (options) {
-		if (L.version < '0.7') {
-			throw new Error('Leaflet.draw 0.2.3+ requires Leaflet 0.7.0+. Download latest from https://github.com/Leaflet/Leaflet/');
+		if (L.version <= "0.5.1") {
+			throw new Error('Leaflet.draw 0.2.0+ requires Leaflet 0.6.0+. Download latest from https://github.com/Leaflet/Leaflet/');
 		}
 
 		L.Control.prototype.initialize.call(this, options);
 
-		var toolbar;
+		var id, toolbar;
 
 		this._toolbars = {};
 
 		// Initialize toolbars
 		if (L.DrawToolbar && this.options.draw) {
 			toolbar = new L.DrawToolbar(this.options.draw);
-
-			this._toolbars[L.DrawToolbar.TYPE] = toolbar;
+			id = L.stamp(toolbar);
+			this._toolbars[id] = toolbar;
 
 			// Listen for when toolbar is enabled
-			this._toolbars[L.DrawToolbar.TYPE].on('enable', this._toolbarEnabled, this);
+			this._toolbars[id].on('enable', this._toolbarEnabled, this);
 		}
 
 		if (L.EditToolbar && this.options.edit) {
 			toolbar = new L.EditToolbar(this.options.edit);
-
-			this._toolbars[L.EditToolbar.TYPE] = toolbar;
+			id = L.stamp(toolbar);
+			this._toolbars[id] = toolbar;
 
 			// Listen for when toolbar is enabled
-			this._toolbars[L.EditToolbar.TYPE].on('enable', this._toolbarEnabled, this);
+			this._toolbars[id].on('enable', this._toolbarEnabled, this);
 		}
-		L.toolbar = this; //set global var for editing the toolbar
 	},
 
-	// @method onAdd(): container
-	// Adds the toolbar container to the map
 	onAdd: function (map) {
 		var container = L.DomUtil.create('div', 'leaflet-draw'),
 			addedTopClass = false,
@@ -3542,25 +1877,21 @@ L.Control.Draw = L.Control.extend({
 			if (this._toolbars.hasOwnProperty(toolbarId)) {
 				toolbarContainer = this._toolbars[toolbarId].addToolbar(map);
 
-				if (toolbarContainer) {
-					// Add class to the first toolbar to remove the margin
-					if (!addedTopClass) {
-						if (!L.DomUtil.hasClass(toolbarContainer, topClassName)) {
-							L.DomUtil.addClass(toolbarContainer.childNodes[0], topClassName);
-						}
-						addedTopClass = true;
+				// Add class to the first toolbar to remove the margin
+				if (!addedTopClass) {
+					if (!L.DomUtil.hasClass(toolbarContainer, topClassName)) {
+						L.DomUtil.addClass(toolbarContainer.childNodes[0], topClassName);
 					}
-
-					container.appendChild(toolbarContainer);
+					addedTopClass = true;
 				}
+
+				container.appendChild(toolbarContainer);
 			}
 		}
 
 		return container;
 	},
 
-	// @method onRemove(): void
-	// Removes the toolbars from the map toolbar container
 	onRemove: function () {
 		for (var toolbarId in this._toolbars) {
 			if (this._toolbars.hasOwnProperty(toolbarId)) {
@@ -3569,8 +1900,6 @@ L.Control.Draw = L.Control.extend({
 		}
 	},
 
-	// @method setDrawingOptions(options): void
-	// Sets options to all toolbar instances
 	setDrawingOptions: function (options) {
 		for (var toolbarId in this._toolbars) {
 			if (this._toolbars[toolbarId] instanceof L.DrawToolbar) {
@@ -3580,10 +1909,10 @@ L.Control.Draw = L.Control.extend({
 	},
 
 	_toolbarEnabled: function (e) {
-		var enabledToolbar = e.target;
+		var id = '' + L.stamp(e.target);
 
 		for (var toolbarId in this._toolbars) {
-			if (this._toolbars[toolbarId] !== enabledToolbar) {
+			if (this._toolbars.hasOwnProperty(toolbarId) && toolbarId !== id) {
 				this._toolbars[toolbarId].disable();
 			}
 		}
@@ -3591,7 +1920,6 @@ L.Control.Draw = L.Control.extend({
 });
 
 L.Map.mergeOptions({
-	drawControlTooltips: true,
 	drawControl: false
 });
 
@@ -3602,144 +1930,33 @@ L.Map.addInitHook(function () {
 	}
 });
 
-
-
-/**
- * @class L.Draw.Toolbar
- * @aka Toolbar
- *
- * The toolbar class of the API — it is used to create the ui
- * This will be depreciated
- *
- * @example
- *
- * ```js
- *    var toolbar = L.Toolbar();
- *    toolbar.addToolbar(map);
- * ```
- *
- * ### Disabling a toolbar
- *
- * If you do not want a particular toolbar in your app you can turn it off by setting the toolbar to false.
- *
- * ```js
- *      var drawControl = new L.Control.Draw({
- *          draw: false,
- *          edit: {
- *              featureGroup: editableLayers
- *          }
- *      });
- * ```
- *
- * ### Disabling a toolbar item
- *
- * If you want to turn off a particular toolbar item, set it to false. The following disables drawing polygons and
- * markers. It also turns off the ability to edit layers.
- *
- * ```js
- *      var drawControl = new L.Control.Draw({
- *          draw: {
- *              polygon: false,
- *              marker: false
- *          },
- *          edit: {
- *              featureGroup: editableLayers,
- *              edit: false
- *          }
- *      });
- * ```
- */
 L.Toolbar = L.Class.extend({
-	// @section Methods for modifying the toolbar
+	includes: [L.Mixin.Events],
 
-	// @method initialize(options): void
-	// Toolbar constructor
 	initialize: function (options) {
 		L.setOptions(this, options);
 
 		this._modes = {};
 		this._actionButtons = [];
 		this._activeMode = null;
-
-		var version = L.version.split('.');
-		//If Version is >= 1.2.0
-		if (parseInt(version[0], 10) === 1 && parseInt(version[1], 10) >= 2) {
-			L.Toolbar.include(L.Evented.prototype);
-		} else {
-			L.Toolbar.include(L.Mixin.Events);
-		}
 	},
 
-	// @method enabled(): boolean
-	// Gets a true/false of whether the toolbar is enabled
 	enabled: function () {
 		return this._activeMode !== null;
 	},
 
-	// @method disable(): void
-	// Disables the toolbar
 	disable: function () {
-		if (!this.enabled()) {
-			return;
-		}
+		if (!this.enabled()) { return; }
 
 		this._activeMode.handler.disable();
 	},
 
-	// @method addToolbar(map): L.DomUtil
-	// Adds the toolbar to the map and returns the toolbar dom element
-	addToolbar: function (map) {
-		var container = L.DomUtil.create('div', 'leaflet-draw-section'),
-			buttonIndex = 0,
-			buttonClassPrefix = this._toolbarClass || '',
-			modeHandlers = this.getModeHandlers(map),
-			i;
-
-		this._toolbarContainer = L.DomUtil.create('div', 'leaflet-draw-toolbar leaflet-bar');
-		this._map = map;
-
-		for (i = 0; i < modeHandlers.length; i++) {
-			if (modeHandlers[i].enabled) {
-				this._initModeHandler(
-					modeHandlers[i].handler,
-					this._toolbarContainer,
-					buttonIndex++,
-					buttonClassPrefix,
-					modeHandlers[i].title
-				);
-			}
-		}
-
-		// if no buttons were added, do not add the toolbar
-		if (!buttonIndex) {
-			return;
-		}
-
-		// Save button index of the last button, -1 as we would have ++ after the last button
-		this._lastButtonIndex = --buttonIndex;
-
-		// Create empty actions part of the toolbar
-		this._actionsContainer = L.DomUtil.create('ul', 'leaflet-draw-actions');
-
-		// Add draw and cancel containers to the control container
-		container.appendChild(this._toolbarContainer);
-		container.appendChild(this._actionsContainer);
-
-		return container;
-	},
-
-	// @method removeToolbar(): void
-	// Removes the toolbar and drops the handler event listeners
 	removeToolbar: function () {
 		// Dispose each handler
 		for (var handlerId in this._modes) {
 			if (this._modes.hasOwnProperty(handlerId)) {
 				// Unbind handler button
-				this._disposeButton(
-					this._modes[handlerId].button,
-					this._modes[handlerId].handler.enable,
-					this._modes[handlerId].handler
-				);
+				this._disposeButton(this._modes[handlerId].button, this._modes[handlerId].handler.enable);
 
 				// Make sure is disabled
 				this._modes[handlerId].handler.disable();
@@ -3754,11 +1971,7 @@ L.Toolbar = L.Class.extend({
 
 		// Dispose the actions toolbar
 		for (var i = 0, l = this._actionButtons.length; i < l; i++) {
-			this._disposeButton(
-				this._actionButtons[i].button,
-				this._actionButtons[i].callback,
-				this
-			);
+			this._disposeButton(this._actionButtons[i].button, this._actionButtons[i].callback);
 		}
 		this._actionButtons = [];
 		this._actionsContainer = null;
@@ -3772,7 +1985,6 @@ L.Toolbar = L.Class.extend({
 		this._modes[type].handler = handler;
 
 		this._modes[type].button = this._createButton({
-			type: type,
 			title: buttonTitle,
 			className: classNamePredix + '-' + type,
 			container: container,
@@ -3787,62 +1999,42 @@ L.Toolbar = L.Class.extend({
 			.on('disabled', this._handlerDeactivated, this);
 	},
 
-	/* Detect iOS based on browser User Agent, based on:
-	 * http://stackoverflow.com/a/9039885 */
-	_detectIOS: function () {
-		var iOS = (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
-		return iOS;
-	},
-
 	_createButton: function (options) {
-
 		var link = L.DomUtil.create('a', options.className || '', options.container);
-		// Screen reader tag
-		var sr = L.DomUtil.create('span', 'sr-only', options.container);
-
 		link.href = '#';
-		link.appendChild(sr);
-
-		if (options.title) {
-			link.title = options.title;
-			sr.innerHTML = options.title;
-		}
 
 		if (options.text) {
 			link.innerHTML = options.text;
-			sr.innerHTML = options.text;
 		}
 
-		/* iOS does not use click events */
-		var buttonEvent = this._detectIOS() ? 'touchstart' : 'click';
+		if (options.title) {
+			link.title = options.title;
+		}
 
 		L.DomEvent
 			.on(link, 'click', L.DomEvent.stopPropagation)
 			.on(link, 'mousedown', L.DomEvent.stopPropagation)
 			.on(link, 'dblclick', L.DomEvent.stopPropagation)
-			.on(link, 'touchstart', L.DomEvent.stopPropagation)
 			.on(link, 'click', L.DomEvent.preventDefault)
-			.on(link, buttonEvent, options.callback, options.context);
+			.on(link, 'click', options.callback, options.context);
 
 		return link;
 	},
 
 	_disposeButton: function (button, callback) {
-		/* iOS does not use click events */
-		var buttonEvent = this._detectIOS() ? 'touchstart' : 'click';
-
 		L.DomEvent
 			.off(button, 'click', L.DomEvent.stopPropagation)
 			.off(button, 'mousedown', L.DomEvent.stopPropagation)
 			.off(button, 'dblclick', L.DomEvent.stopPropagation)
-			.off(button, 'touchstart', L.DomEvent.stopPropagation)
 			.off(button, 'click', L.DomEvent.preventDefault)
-			.off(button, buttonEvent, callback);
+			.off(button, 'click', callback);
 	},
 
 	_handlerActivated: function (e) {
 		// Disable active mode (if present)
-		this.disable();
+		if (this._activeMode && this._activeMode.handler.enabled()) {
+			this._activeMode.handler.disable();
+		}
 
 		// Cache new active feature
 		this._activeMode = this._modes[e.handler];
@@ -3864,28 +2056,12 @@ L.Toolbar = L.Class.extend({
 		this.fire('disable');
 	},
 
-	_createActions: function (handler) {
-		var container = this._actionsContainer,
-			buttons = this.getActions(handler),
+	_createActions: function (buttons) {
+		var container = L.DomUtil.create('ul', 'leaflet-draw-actions'),
 			l = buttons.length,
-			li, di, dl, button;
-
-		// Dispose the actions toolbar (todo: dispose only not used buttons)
-		for (di = 0, dl = this._actionButtons.length; di < dl; di++) {
-			this._disposeButton(this._actionButtons[di].button, this._actionButtons[di].callback);
-		}
-		this._actionButtons = [];
-
-		// Remove all old buttons
-		while (container.firstChild) {
-			container.removeChild(container.firstChild);
-		}
+			li, button;
 
 		for (var i = 0; i < l; i++) {
-			if ('enabled' in buttons[i] && !buttons[i].enabled) {
-				continue;
-			}
-
 			li = L.DomUtil.create('li', '', container);
 
 			button = this._createButton({
@@ -3901,15 +2077,16 @@ L.Toolbar = L.Class.extend({
 				callback: buttons[i].callback
 			});
 		}
+
+		return container;
 	},
 
 	_showActionsToolbar: function () {
 		var buttonIndex = this._activeMode.buttonIndex,
 			lastButtonIndex = this._lastButtonIndex,
-			toolbarPosition = this._activeMode.button.offsetTop - 1;
-
-		// Recreate action buttons on every click
-		this._createActions(this._activeMode.handler);
+			buttonHeight = 26, // TODO: this should be calculated
+			borderHeight = 1, // TODO: this should also be calculated
+			toolbarPosition = (buttonIndex * buttonHeight) + (buttonIndex * borderHeight) - 1;
 
 		// Correctly position the cancel button
 		this._actionsContainer.style.top = toolbarPosition + 'px';
@@ -3925,7 +2102,6 @@ L.Toolbar = L.Class.extend({
 		}
 
 		this._actionsContainer.style.display = 'block';
-		this._map.fire(L.Draw.Event.TOOLBAROPENED);
 	},
 
 	_hideActionsToolbar: function () {
@@ -3935,62 +2111,24 @@ L.Toolbar = L.Class.extend({
 		L.DomUtil.removeClass(this._toolbarContainer, 'leaflet-draw-toolbar-nobottom');
 		L.DomUtil.removeClass(this._actionsContainer, 'leaflet-draw-actions-top');
 		L.DomUtil.removeClass(this._actionsContainer, 'leaflet-draw-actions-bottom');
-		this._map.fire(L.Draw.Event.TOOLBARCLOSED);
 	}
 });
 
-
-
-L.Draw = L.Draw || {};
-/**
- * @class L.Draw.Tooltip
- * @aka Tooltip
- *
- * The tooltip class — it is used to display the tooltip while drawing
- * This will be depreciated
- *
- * @example
- *
- * ```js
- *    var tooltip = L.Draw.Tooltip();
- * ```
- *
- */
-L.Draw.Tooltip = L.Class.extend({
-
-	// @section Methods for modifying draw state
-
-	// @method initialize(map): void
-	// Tooltip constructor
+L.Tooltip = L.Class.extend({
 	initialize: function (map) {
 		this._map = map;
 		this._popupPane = map._panes.popupPane;
-		this._visible = false;
 
-		this._container = map.options.drawControlTooltips ?
-			L.DomUtil.create('div', 'leaflet-draw-tooltip', this._popupPane) : null;
+		this._container = L.DomUtil.create('div', 'leaflet-draw-tooltip', this._popupPane);
 		this._singleLineLabel = false;
-
-		this._map.on('mouseout', this._onMouseOut, this);
 	},
 
-	// @method dispose(): void
-	// Remove Tooltip DOM and unbind events
 	dispose: function () {
-		this._map.off('mouseout', this._onMouseOut, this);
-
-		if (this._container) {
-			this._popupPane.removeChild(this._container);
-			this._container = null;
-		}
+		this._popupPane.removeChild(this._container);
+		this._container = null;
 	},
 
-	// @method updateContent(labelText): this
-	// Changes the tooltip text to string in function call
 	updateContent: function (labelText) {
-		if (!this._container) {
-			return this;
-		}
 		labelText.subtext = labelText.subtext || '';
 
 		// update the vertical position (only if changed)
@@ -4004,84 +2142,41 @@ L.Draw.Tooltip = L.Class.extend({
 		}
 
 		this._container.innerHTML =
-			(labelText.subtext.length > 0 ?
-				'<span class="leaflet-draw-tooltip-subtext">' + labelText.subtext + '</span>' + '<br />' : '') +
+			(labelText.subtext.length > 0 ? '<span class="leaflet-draw-tooltip-subtext">' + labelText.subtext + '</span>' + '<br />' : '') +
 			'<span>' + labelText.text + '</span>';
 
-		if (!labelText.text && !labelText.subtext) {
-			this._visible = false;
-			this._container.style.visibility = 'hidden';
-		} else {
-			this._visible = true;
-			this._container.style.visibility = 'inherit';
-		}
-
 		return this;
 	},
 
-	// @method updatePosition(latlng): this
-	// Changes the location of the tooltip
 	updatePosition: function (latlng) {
-		var pos = this._map.latLngToLayerPoint(latlng),
-			tooltipContainer = this._container;
+		var pos = this._map.latLngToLayerPoint(latlng);
 
-		if (this._container) {
-			if (this._visible) {
-				tooltipContainer.style.visibility = 'inherit';
-			}
-			L.DomUtil.setPosition(tooltipContainer, pos);
-		}
+		L.DomUtil.setPosition(this._container, pos);
 
 		return this;
 	},
 
-	// @method showAsError(): this
-	// Applies error class to tooltip
 	showAsError: function () {
-		if (this._container) {
-			L.DomUtil.addClass(this._container, 'leaflet-error-draw-tooltip');
-		}
+		L.DomUtil.addClass(this._container, 'leaflet-error-draw-tooltip');
 		return this;
 	},
 
-	// @method removeError(): this
-	// Removes the error class from the tooltip
 	removeError: function () {
-		if (this._container) {
-			L.DomUtil.removeClass(this._container, 'leaflet-error-draw-tooltip');
-		}
+		L.DomUtil.removeClass(this._container, 'leaflet-error-draw-tooltip');
 		return this;
-	},
-
-	_onMouseOut: function () {
-		if (this._container) {
-			this._container.style.visibility = 'hidden';
-		}
 	}
 });
 
-
-
-/**
- * @class L.DrawToolbar
- * @aka Toolbar
- */
 L.DrawToolbar = L.Toolbar.extend({
-
-	statics: {
-		TYPE: 'draw'
-	},
 
 	options: {
 		polyline: {},
 		polygon: {},
 		rectangle: {},
 		circle: {},
-		marker: {},
-		circlemarker: {}
+		marker: {}
 	},
 
-	// @method initialize(): void
 	initialize: function (options) {
 		// Ensure that the options are merged correctly since L.extend is only shallow
 		for (var type in this.options) {
@@ -4092,76 +2187,87 @@ L.DrawToolbar = L.Toolbar.extend({
 			}
 		}
 
-		this._toolbarClass = 'leaflet-draw-draw';
 		L.Toolbar.prototype.initialize.call(this, options);
 	},
 
-	// @method getModeHandlers(): object
-	// Get mode handlers information
-	getModeHandlers: function (map) {
-		return [
-			{
-				enabled: this.options.polyline,
-				handler: new L.Draw.Polyline(map, this.options.polyline),
-				title: L.drawLocal.draw.toolbar.buttons.polyline
-			},
-			{
-				enabled: this.options.polygon,
-				handler: new L.Draw.Polygon(map, this.options.polygon),
-				title: L.drawLocal.draw.toolbar.buttons.polygon
-			},
-			{
-				enabled: this.options.rectangle,
-				handler: new L.Draw.Rectangle(map, this.options.rectangle),
-				title: L.drawLocal.draw.toolbar.buttons.rectangle
-			},
-			{
-				enabled: this.options.circle,
-				handler: new L.Draw.Circle(map, this.options.circle),
-				title: L.drawLocal.draw.toolbar.buttons.circle
-			},
-			{
-				enabled: this.options.marker,
-				handler: new L.Draw.Marker(map, this.options.marker),
-				title: L.drawLocal.draw.toolbar.buttons.marker
-			},
-			{
-				enabled: this.options.circlemarker,
-				handler: new L.Draw.CircleMarker(map, this.options.circlemarker),
-				title: L.drawLocal.draw.toolbar.buttons.circlemarker
-			}
-		];
-	},
+	addToolbar: function (map) {
+		var container = L.DomUtil.create('div', 'leaflet-draw-section'),
+			buttonIndex = 0,
+			buttonClassPrefix = 'leaflet-draw-draw';
 
-	// @method getActions(): object
-	// Get action information
-	getActions: function (handler) {
-		return [
-			{
-				enabled: handler.completeShape,
-				title: L.drawLocal.draw.toolbar.finish.title,
-				text: L.drawLocal.draw.toolbar.finish.text,
-				callback: handler.completeShape,
-				context: handler
-			},
-			{
-				enabled: handler.deleteLastVertex,
-				title: L.drawLocal.draw.toolbar.undo.title,
-				text: L.drawLocal.draw.toolbar.undo.text,
-				callback: handler.deleteLastVertex,
-				context: handler
-			},
+		this._toolbarContainer = L.DomUtil.create('div', 'leaflet-draw-toolbar leaflet-bar');
+
+
+		if (this.options.polyline) {
+			this._initModeHandler(
+				new L.Draw.Polyline(map, this.options.polyline),
+				this._toolbarContainer,
+				buttonIndex++,
+				buttonClassPrefix,
+				L.drawLocal.draw.toolbar.buttons.polyline
+			);
+		}
+
+		if (this.options.polygon) {
+			this._initModeHandler(
+				new L.Draw.Polygon(map, this.options.polygon),
+				this._toolbarContainer,
+				buttonIndex++,
+				buttonClassPrefix,
+				L.drawLocal.draw.toolbar.buttons.polygon
+			);
+		}
+
+		if (this.options.rectangle) {
+			this._initModeHandler(
+				new L.Draw.Rectangle(map, this.options.rectangle),
+				this._toolbarContainer,
+				buttonIndex++,
+				buttonClassPrefix,
+				L.drawLocal.draw.toolbar.buttons.rectangle
+			);
+		}
+
+		if (this.options.circle) {
+			this._initModeHandler(
+				new L.Draw.Circle(map, this.options.circle),
+				this._toolbarContainer,
+				buttonIndex++,
+				buttonClassPrefix,
+				L.drawLocal.draw.toolbar.buttons.circle
+			);
+		}
+
+		if (this.options.marker) {
+			this._initModeHandler(
+				new L.Draw.Marker(map, this.options.marker),
+				this._toolbarContainer,
+				buttonIndex++,
+				buttonClassPrefix,
+				L.drawLocal.draw.toolbar.buttons.marker
+			);
+		}
+
+		// Save button index of the last button, -1 as we would have ++ after the last button
+		this._lastButtonIndex = --buttonIndex;
+
+		// Create the actions part of the toolbar
+		this._actionsContainer = this._createActions([
 			{
 				title: L.drawLocal.draw.toolbar.actions.title,
 				text: L.drawLocal.draw.toolbar.actions.text,
 				callback: this.disable,
 				context: this
 			}
-		];
+		]);
+
+		// Add draw and cancel containers to the control container
+		container.appendChild(this._toolbarContainer);
+		container.appendChild(this._actionsContainer);
+
+		return container;
 	},
 
-	// @method setOptions(): void
-	// Sets the options to the toolbar
 	setOptions: function (options) {
 		L.setOptions(this, options);
 
@@ -4173,90 +2279,84 @@ L.DrawToolbar = L.Toolbar.extend({
 	}
 });
 
-
-
 /*L.Map.mergeOptions({
- editControl: true
- });*/
-/**
- * @class L.EditToolbar
- * @aka EditToolbar
- */
-L.EditToolbar = L.Toolbar.extend({
-	statics: {
-		TYPE: 'edit'
-	},
+	editControl: true
+});*/
 
+L.EditToolbar = L.Toolbar.extend({
 	options: {
 		edit: {
 			selectedPathOptions: {
+				color: '#fe57a1', /* Hot pink all the things! */
+				opacity: 0.6,
 				dashArray: '10, 10',
 
 				fill: true,
 				fillColor: '#fe57a1',
-				fillOpacity: 0.1,
-
-				// Whether to user the existing layers color
-				maintainColor: false
+				fillOpacity: 0.1
 			}
 		},
 		remove: {},
-		poly: null,
 		featureGroup: null /* REQUIRED! TODO: perhaps if not set then all layers on the map are selectable? */
 	},
 
-	// @method intialize(): void
 	initialize: function (options) {
 		// Need to set this manually since null is an acceptable value here
 		if (options.edit) {
 			if (typeof options.edit.selectedPathOptions === 'undefined') {
 				options.edit.selectedPathOptions = this.options.edit.selectedPathOptions;
 			}
-			options.edit.selectedPathOptions = L.extend({}, this.options.edit.selectedPathOptions, options.edit.selectedPathOptions);
+			options.edit = L.extend({}, this.options.edit, options.edit);
 		}
 
 		if (options.remove) {
 			options.remove = L.extend({}, this.options.remove, options.remove);
 		}
 
-		if (options.poly) {
-			options.poly = L.extend({}, this.options.poly, options.poly);
-		}
-
-		this._toolbarClass = 'leaflet-draw-edit';
 		L.Toolbar.prototype.initialize.call(this, options);
 
 		this._selectedFeatureCount = 0;
 	},
 
-	// @method getModeHandlers(): object
-	// Get mode handlers information
-	getModeHandlers: function (map) {
-		var featureGroup = this.options.featureGroup;
-		return [
-			{
-				enabled: this.options.edit,
-				handler: new L.EditToolbar.Edit(map, {
-					featureGroup: featureGroup,
-					selectedPathOptions: this.options.edit.selectedPathOptions,
-					poly: this.options.poly
-				}),
-				title: L.drawLocal.edit.toolbar.buttons.edit
-			},
-			{
-				enabled: this.options.remove,
-				handler: new L.EditToolbar.Delete(map, {
-					featureGroup: featureGroup
-				}),
-				title: L.drawLocal.edit.toolbar.buttons.remove
-			}
-		];
-	},
+	addToolbar: function (map) {
+		var container = L.DomUtil.create('div', 'leaflet-draw-section'),
+			buttonIndex = 0,
+			buttonClassPrefix = 'leaflet-draw-edit';
 
-	// @method getActions(): object
-	// Get actions information
-	getActions: function (handler) {
-		var actions = [
+		this._toolbarContainer = L.DomUtil.create('div', 'leaflet-draw-toolbar leaflet-bar');
+
+		this._map = map;
+
+		if (this.options.edit) {
+			this._initModeHandler(
+				new L.EditToolbar.Edit(map, {
+					featureGroup: this.options.featureGroup,
+					selectedPathOptions: this.options.edit.selectedPathOptions
+				}),
+				this._toolbarContainer,
+				buttonIndex++,
+				buttonClassPrefix,
+				L.drawLocal.edit.toolbar.buttons.edit
+			);
+		}
+
+		if (this.options.remove) {
+			this._initModeHandler(
+				new L.EditToolbar.Delete(map, {
+					featureGroup: this.options.featureGroup
+				}),
+				this._toolbarContainer,
+				buttonIndex++,
+				buttonClassPrefix,
+				L.drawLocal.edit.toolbar.buttons.remove
+			);
+		}
+
+		// Save button index of the last button, -1 as we would have ++ after the last button
+		this._lastButtonIndex = --buttonIndex;
+
+		// Create the actions part of the toolbar
+		this._actionsContainer = this._createActions([
 			{
 				title: L.drawLocal.edit.toolbar.actions.save.title,
 				text: L.drawLocal.edit.toolbar.actions.save.text,
@@ -4269,46 +2369,17 @@ L.EditToolbar = L.Toolbar.extend({
 				callback: this.disable,
 				context: this
 			}
-		];
+		]);
 
-		if (handler.removeAllLayers) {
-			actions.push({
-				title: L.drawLocal.edit.toolbar.actions.clearAll.title,
-				text: L.drawLocal.edit.toolbar.actions.clearAll.text,
-				callback: this._clearAllLayers,
-				context: this
-			});
-		}
-
-		return actions;
-	},
-
-	// @method addToolbar(map): L.DomUtil
-	// Adds the toolbar to the map
-	addToolbar: function (map) {
-		var container = L.Toolbar.prototype.addToolbar.call(this, map);
-
-		this._checkDisabled();
-
-		this.options.featureGroup.on('layeradd layerremove', this._checkDisabled, this);
+		// Add draw and cancel containers to the control container
+		container.appendChild(this._toolbarContainer);
+		container.appendChild(this._actionsContainer);
 
 		return container;
 	},
 
-	// @method removeToolbar(): void
-	// Removes the toolbar from the map
-	removeToolbar: function () {
-		this.options.featureGroup.off('layeradd layerremove', this._checkDisabled, this);
-
-		L.Toolbar.prototype.removeToolbar.call(this);
-	},
-
-	// @method disable(): void
-	// Disables the toolbar
 	disable: function () {
-		if (!this.enabled()) {
-			return;
-		}
+		if (!this.enabled()) { return; }
 
 		this._activeMode.handler.revertLayers();
 
@@ -4317,75 +2388,22 @@ L.EditToolbar = L.Toolbar.extend({
 
 	_save: function () {
 		this._activeMode.handler.save();
-		if (this._activeMode) {
-			this._activeMode.handler.disable();
-		}
-	},
-
-	_clearAllLayers: function () {
-		this._activeMode.handler.removeAllLayers();
-		if (this._activeMode) {
-			this._activeMode.handler.disable();
-		}
-	},
-
-	_checkDisabled: function () {
-		var featureGroup = this.options.featureGroup,
-			hasLayers = featureGroup.getLayers().length !== 0,
-			button;
-
-		if (this.options.edit) {
-			button = this._modes[L.EditToolbar.Edit.TYPE].button;
-
-			if (hasLayers) {
-				L.DomUtil.removeClass(button, 'leaflet-disabled');
-			} else {
-				L.DomUtil.addClass(button, 'leaflet-disabled');
-			}
-
-			button.setAttribute(
-				'title',
-				hasLayers ?
-					L.drawLocal.edit.toolbar.buttons.edit
-					: L.drawLocal.edit.toolbar.buttons.editDisabled
-			);
-		}
-
-		if (this.options.remove) {
-			button = this._modes[L.EditToolbar.Delete.TYPE].button;
-
-			if (hasLayers) {
-				L.DomUtil.removeClass(button, 'leaflet-disabled');
-			} else {
-				L.DomUtil.addClass(button, 'leaflet-disabled');
-			}
-
-			button.setAttribute(
-				'title',
-				hasLayers ?
-					L.drawLocal.edit.toolbar.buttons.remove
-					: L.drawLocal.edit.toolbar.buttons.removeDisabled
-			);
-		}
+		this._activeMode.handler.disable();
 	}
 });
 
-
-
-/**
- * @class L.EditToolbar.Edit
- * @aka EditToolbar.Edit
- */
 L.EditToolbar.Edit = L.Handler.extend({
 	statics: {
 		TYPE: 'edit'
 	},
 
-	// @method intialize(): void
+	includes: L.Mixin.Events,
+
 	initialize: function (map, options) {
 		L.Handler.prototype.initialize.call(this, map);
 
-		L.setOptions(this, options);
+		// Set options to the default unless already set
+		this._selectedPathOptions = options.selectedPathOptions;
 
 		// Store the selectable layer group for ease of access
 		this._featureGroup = options.featureGroup;
@@ -4398,79 +2416,48 @@ L.EditToolbar.Edit = L.Handler.extend({
 
 		// Save the type so super can fire, need to do this as cannot do this.TYPE :(
 		this.type = L.EditToolbar.Edit.TYPE;
-
-		var version = L.version.split('.');
-		//If Version is >= 1.2.0
-		if (parseInt(version[0], 10) === 1 && parseInt(version[1], 10) >= 2) {
-			L.EditToolbar.Edit.include(L.Evented.prototype);
-		} else {
-			L.EditToolbar.Edit.include(L.Mixin.Events);
-		}
 	},
 
-	// @method enable(): void
-	// Enable the edit toolbar
 	enable: function () {
-		if (this._enabled || !this._hasAvailableLayers()) {
-			return;
-		}
-		this.fire('enabled', {handler: this.type});
-		//this disable other handlers
-
-		this._map.fire(L.Draw.Event.EDITSTART, {handler: this.type});
-		//allow drawLayer to be updated before beginning edition.
+		if (this._enabled) { return; }
 
 		L.Handler.prototype.enable.call(this);
+
 		this._featureGroup
 			.on('layeradd', this._enableLayerEdit, this)
 			.on('layerremove', this._disableLayerEdit, this);
+
+		this.fire('enabled', {handler: this.type});
+		this._map.fire('draw:editstart', { handler: this.type });
 	},
 
-	// @method disable(): void
-	// Disable the edit toolbar
 	disable: function () {
-		if (!this._enabled) {
-			return;
-		}
+		if (!this._enabled) { return; }
+
+		this.fire('disabled', {handler: this.type});
+		this._map.fire('draw:editstop', { handler: this.type });
+
 		this._featureGroup
 			.off('layeradd', this._enableLayerEdit, this)
 			.off('layerremove', this._disableLayerEdit, this);
+
 		L.Handler.prototype.disable.call(this);
-		this._map.fire(L.Draw.Event.EDITSTOP, {handler: this.type});
-		this.fire('disabled', {handler: this.type});
 	},
 
-	// @method addHooks(): void
-	// Add listener hooks for this handler
 	addHooks: function () {
-		var map = this._map;
-
-		if (map) {
-			map.getContainer().focus();
-
+		if (this._map) {
 			this._featureGroup.eachLayer(this._enableLayerEdit, this);
 
-			this._tooltip = new L.Draw.Tooltip(this._map);
+			this._tooltip = new L.Tooltip(this._map);
 			this._tooltip.updateContent({
 				text: L.drawLocal.edit.handlers.edit.tooltip.text,
 				subtext: L.drawLocal.edit.handlers.edit.tooltip.subtext
 			});
 
-			// Quickly access the tooltip to update for intersection checking
-			map._editTooltip = this._tooltip;
-
-			this._updateTooltip();
-
-			this._map
-				.on('mousemove', this._onMouseMove, this)
-				.on('touchmove', this._onMouseMove, this)
-				.on('MSPointerMove', this._onMouseMove, this)
-				.on(L.Draw.Event.EDITVERTEX, this._updateTooltip, this);
+			this._map.on('mousemove', this._onMouseMove, this);
 		}
 	},
 
-	// @method removeHooks(): void
-	// Remove listener hooks for this handler
 	removeHooks: function () {
 		if (this._map) {
 			// Clean up selected layers.
@@ -4482,24 +2469,16 @@ L.EditToolbar.Edit = L.Handler.extend({
 			this._tooltip.dispose();
 			this._tooltip = null;
 
-			this._map
-				.off('mousemove', this._onMouseMove, this)
-				.off('touchmove', this._onMouseMove, this)
-				.off('MSPointerMove', this._onMouseMove, this)
-				.off(L.Draw.Event.EDITVERTEX, this._updateTooltip, this);
+			this._map.off('mousemove', this._onMouseMove, this);
 		}
 	},
 
-	// @method revertLayers(): void
-	// Revert each layer's geometry changes
 	revertLayers: function () {
 		this._featureGroup.eachLayer(function (layer) {
 			this._revertLayer(layer);
 		}, this);
 	},
 
-	// @method save(): void
-	// Save the layer geometries
 	save: function () {
 		var editedLayers = new L.LayerGroup();
 		this._featureGroup.eachLayer(function (layer) {
@@ -4508,24 +2487,24 @@ L.EditToolbar.Edit = L.Handler.extend({
 				layer.edited = false;
 			}
 		});
-		this._map.fire(L.Draw.Event.EDITED, {layers: editedLayers});
+		this._map.fire('draw:edited', {layers: editedLayers});
 	},
 
 	_backupLayer: function (layer) {
 		var id = L.Util.stamp(layer);
 
 		if (!this._uneditedLayerProps[id]) {
-			// Polyline, Polygon or Rectangle
-			if (layer instanceof L.Polyline || layer instanceof L.Polygon || layer instanceof L.Rectangle) {
-				this._uneditedLayerProps[id] = {
-					latlngs: L.LatLngUtil.cloneLatLngs(layer.getLatLngs())
-				};
-			} else if (layer instanceof L.Circle) {
+			if (layer instanceof L.GeodesicCircle || layer instanceof L.Circle) {
 				this._uneditedLayerProps[id] = {
 					latlng: L.LatLngUtil.cloneLatLng(layer.getLatLng()),
 					radius: layer.getRadius()
 				};
-			} else if (layer instanceof L.Marker || layer instanceof L.CircleMarker) { // Marker
+			} else if (layer instanceof L.GeodesicPolyline || layer instanceof L.GeodesicPolygon || layer instanceof L.Rectangle) {
+				// Polyline, Polygon or Rectangle
+				this._uneditedLayerProps[id] = {
+					latlngs: L.LatLngUtil.cloneLatLngs(layer.getLatLngs())
+				};
+			} else { // Marker
 				this._uneditedLayerProps[id] = {
 					latlng: L.LatLngUtil.cloneLatLng(layer.getLatLng())
 				};
@@ -4533,74 +2512,89 @@ L.EditToolbar.Edit = L.Handler.extend({
 		}
 	},
 
-	_getTooltipText: function () {
-		return ({
-			text: L.drawLocal.edit.handlers.edit.tooltip.text,
-			subtext: L.drawLocal.edit.handlers.edit.tooltip.subtext
-		});
-	},
-
-	_updateTooltip: function () {
-		this._tooltip.updateContent(this._getTooltipText());
-	},
-
 	_revertLayer: function (layer) {
 		var id = L.Util.stamp(layer);
 		layer.edited = false;
 		if (this._uneditedLayerProps.hasOwnProperty(id)) {
-			// Polyline, Polygon or Rectangle
-			if (layer instanceof L.Polyline || layer instanceof L.Polygon || layer instanceof L.Rectangle) {
-				layer.setLatLngs(this._uneditedLayerProps[id].latlngs);
-			} else if (layer instanceof L.Circle) {
+			if (layer instanceof L.GeodesicCircle || layer instanceof L.Circle) {
 				layer.setLatLng(this._uneditedLayerProps[id].latlng);
 				layer.setRadius(this._uneditedLayerProps[id].radius);
-			} else if (layer instanceof L.Marker || layer instanceof L.CircleMarker) { // Marker or CircleMarker
+			} else if (layer instanceof L.GeodesicPolyline || layer instanceof L.GeodesicPolygon || layer instanceof L.Rectangle) {
+				// Polyline, Polygon or Rectangle
+				layer.setLatLngs(this._uneditedLayerProps[id].latlngs);
+			} else { // Marker
 				layer.setLatLng(this._uneditedLayerProps[id].latlng);
 			}
-
-			layer.fire('revert-edited', {layer: layer});
 		}
+	},
+
+	_toggleMarkerHighlight: function (marker) {
+		if (!marker._icon) {
+			return;
+		}
+		// This is quite naughty, but I don't see another way of doing it. (short of setting a new icon)
+		var icon = marker._icon;
+
+		icon.style.display = 'none';
+
+		if (L.DomUtil.hasClass(icon, 'leaflet-edit-marker-selected')) {
+			L.DomUtil.removeClass(icon, 'leaflet-edit-marker-selected');
+			// Offset as the border will make the icon move.
+			this._offsetMarker(icon, -4);
+
+		} else {
+			L.DomUtil.addClass(icon, 'leaflet-edit-marker-selected');
+			// Offset as the border will make the icon move.
+			this._offsetMarker(icon, 4);
+		}
+
+		icon.style.display = '';
+	},
+
+	_offsetMarker: function (icon, offset) {
+		var iconMarginTop = parseInt(icon.style.marginTop, 10) - offset,
+			iconMarginLeft = parseInt(icon.style.marginLeft, 10) - offset;
+
+		icon.style.marginTop = iconMarginTop + 'px';
+		icon.style.marginLeft = iconMarginLeft + 'px';
 	},
 
 	_enableLayerEdit: function (e) {
 		var layer = e.layer || e.target || e,
-			pathOptions, poly;
+			isMarker = layer instanceof L.Marker,
+			pathOptions;
+
+		// Don't do anything if this layer is a marker but doesn't have an icon. Markers
+		// should usually have icons. If using Leaflet.draw with Leaflet.markercluster there
+		// is a chance that a marker doesn't.
+		if (isMarker && !layer._icon) {
+			return;
+		}
 
 		// Back up this layer (if haven't before)
 		this._backupLayer(layer);
 
-		if (this.options.poly) {
-			poly = L.Util.extend({}, this.options.poly);
-			layer.options.poly = poly;
+		// Update layer style so appears editable
+		if (this._selectedPathOptions) {
+			pathOptions = L.Util.extend({}, this._selectedPathOptions);
+
+			if (isMarker) {
+				this._toggleMarkerHighlight(layer);
+			} else {
+				layer.options.previousOptions = layer.options;
+
+				// Make sure that Polylines are not filled
+				if (!(layer instanceof L.Circle) && !(layer instanceof L.GeodesicCircle) && !(layer instanceof L.GeodesicPolygon) && !(layer instanceof L.Rectangle)) {
+					pathOptions.fill = false;
+				}
+
+				layer.setStyle(pathOptions);
+			}
 		}
 
-		// Set different style for editing mode
-		if (this.options.selectedPathOptions) {
-			pathOptions = L.Util.extend({}, this.options.selectedPathOptions);
-
-			// Use the existing color of the layer
-			if (pathOptions.maintainColor) {
-				pathOptions.color = layer.options.color;
-				pathOptions.fillColor = layer.options.fillColor;
-			}
-
-			layer.options.original = L.extend({}, layer.options);
-			layer.options.editing = pathOptions;
-
-		}
-
-		if (layer instanceof L.Marker) {
-			if (layer.editing) {
-				layer.editing.enable();
-			}
+		if (isMarker) {
 			layer.dragging.enable();
-			layer
-				.on('dragend', this._onMarkerDragEnd)
-				// #TODO: remove when leaflet finally fixes their draggable so it's touch friendly again.
-				.on('touchmove', this._onTouchMove, this)
-				.on('MSPointerMove', this._onTouchMove, this)
-				.on('touchend', this._onMarkerDragEnd, this)
-				.on('MSPointerUp', this._onMarkerDragEnd, this);
+			layer.on('dragend', this._onMarkerDragEnd);
 		} else {
 			layer.editing.enable();
 		}
@@ -4608,14 +2602,8 @@ L.EditToolbar.Edit = L.Handler.extend({
 
 	_disableLayerEdit: function (e) {
 		var layer = e.layer || e.target || e;
-
 		layer.edited = false;
-		if (layer.editing) {
-			layer.editing.disable();
-		}
 
-		delete layer.options.editing;
-		delete layer.options.original;
 		// Reset layer styles to that of before select
 		if (this._selectedPathOptions) {
 			if (layer instanceof L.Marker) {
@@ -4630,51 +2618,30 @@ L.EditToolbar.Edit = L.Handler.extend({
 
 		if (layer instanceof L.Marker) {
 			layer.dragging.disable();
-			layer
-				.off('dragend', this._onMarkerDragEnd, this)
-				.off('touchmove', this._onTouchMove, this)
-				.off('MSPointerMove', this._onTouchMove, this)
-				.off('touchend', this._onMarkerDragEnd, this)
-				.off('MSPointerUp', this._onMarkerDragEnd, this);
+			layer.off('dragend', this._onMarkerDragEnd, this);
 		} else {
 			layer.editing.disable();
 		}
 	},
 
-	_onMouseMove: function (e) {
-		this._tooltip.updatePosition(e.latlng);
-	},
-
 	_onMarkerDragEnd: function (e) {
 		var layer = e.target;
 		layer.edited = true;
-		this._map.fire(L.Draw.Event.EDITMOVE, {layer: layer});
 	},
 
-	_onTouchMove: function (e) {
-		var touchEvent = e.originalEvent.changedTouches[0],
-			layerPoint = this._map.mouseEventToLayerPoint(touchEvent),
-			latlng = this._map.layerPointToLatLng(layerPoint);
-		e.target.setLatLng(latlng);
-	},
-
-	_hasAvailableLayers: function () {
-		return this._featureGroup.getLayers().length !== 0;
+	_onMouseMove: function (e) {
+		this._tooltip.updatePosition(e.latlng);
 	}
 });
 
 
-
-/**
- * @class L.EditToolbar.Delete
- * @aka EditToolbar.Delete
- */
 L.EditToolbar.Delete = L.Handler.extend({
 	statics: {
 		TYPE: 'remove' // not delete as delete is reserved in js
 	},
 
-	// @method intialize(): void
+	includes: L.Mixin.Events,
+
 	initialize: function (map, options) {
 		L.Handler.prototype.initialize.call(this, map);
 
@@ -4689,72 +2656,46 @@ L.EditToolbar.Delete = L.Handler.extend({
 
 		// Save the type so super can fire, need to do this as cannot do this.TYPE :(
 		this.type = L.EditToolbar.Delete.TYPE;
-
-		var version = L.version.split('.');
-		//If Version is >= 1.2.0
-		if (parseInt(version[0], 10) === 1 && parseInt(version[1], 10) >= 2) {
-			L.EditToolbar.Delete.include(L.Evented.prototype);
-		} else {
-			L.EditToolbar.Delete.include(L.Mixin.Events);
-		}
-
 	},
 
-	// @method enable(): void
-	// Enable the delete toolbar
 	enable: function () {
-		if (this._enabled || !this._hasAvailableLayers()) {
-			return;
-		}
-		this.fire('enabled', {handler: this.type});
-
-		this._map.fire(L.Draw.Event.DELETESTART, {handler: this.type});
+		if (this._enabled) { return; }
 
 		L.Handler.prototype.enable.call(this);
 
 		this._deletableLayers
 			.on('layeradd', this._enableLayerDelete, this)
 			.on('layerremove', this._disableLayerDelete, this);
+
+		this.fire('enabled', { handler: this.type});
+		this._map.fire('draw:editstart', { handler: this.type });
 	},
 
-	// @method disable(): void
-	// Disable the delete toolbar
 	disable: function () {
-		if (!this._enabled) {
-			return;
-		}
+		if (!this._enabled) { return; }
+
+		L.Handler.prototype.disable.call(this);
 
 		this._deletableLayers
 			.off('layeradd', this._enableLayerDelete, this)
 			.off('layerremove', this._disableLayerDelete, this);
 
-		L.Handler.prototype.disable.call(this);
-
-		this._map.fire(L.Draw.Event.DELETESTOP, {handler: this.type});
-
-		this.fire('disabled', {handler: this.type});
+		this.fire('disabled', { handler: this.type});
+		this._map.fire('draw:editstop', { handler: this.type });
 	},
 
-	// @method addHooks(): void
-	// Add listener hooks to this handler
 	addHooks: function () {
-		var map = this._map;
-
-		if (map) {
-			map.getContainer().focus();
-
+		if (this._map) {
 			this._deletableLayers.eachLayer(this._enableLayerDelete, this);
-			this._deletedLayers = new L.LayerGroup();
+			this._deletedLayers = new L.layerGroup();
 
-			this._tooltip = new L.Draw.Tooltip(this._map);
-			this._tooltip.updateContent({text: L.drawLocal.edit.handlers.remove.tooltip.text});
+			this._tooltip = new L.Tooltip(this._map);
+			this._tooltip.updateContent({ text: L.drawLocal.edit.handlers.remove.tooltip.text });
 
 			this._map.on('mousemove', this._onMouseMove, this);
 		}
 	},
 
-	// @method removeHooks(): void
-	// Remove listener hooks from this handler
 	removeHooks: function () {
 		if (this._map) {
 			this._deletableLayers.eachLayer(this._disableLayerDelete, this);
@@ -4767,30 +2708,15 @@ L.EditToolbar.Delete = L.Handler.extend({
 		}
 	},
 
-	// @method revertLayers(): void
-	// Revert the deleted layers back to their prior state.
 	revertLayers: function () {
 		// Iterate of the deleted layers and add them back into the featureGroup
 		this._deletedLayers.eachLayer(function (layer) {
 			this._deletableLayers.addLayer(layer);
-			layer.fire('revert-deleted', {layer: layer});
 		}, this);
 	},
 
-	// @method save(): void
-	// Save deleted layers
 	save: function () {
-		this._map.fire(L.Draw.Event.DELETED, {layers: this._deletedLayers});
-	},
-
-	// @method removeAllLayers(): void
-	// Remove all delateable layers
-	removeAllLayers: function () {
-		// Iterate of the delateable layers and add remove them
-		this._deletableLayers.eachLayer(function (layer) {
-			this._removeLayer({layer: layer});
-		}, this);
-		this.save();
+		this._map.fire('draw:deleted', { layers: this._deletedLayers });
 	},
 
 	_enableLayerDelete: function (e) {
@@ -4804,7 +2730,7 @@ L.EditToolbar.Delete = L.Handler.extend({
 
 		layer.off('click', this._removeLayer, this);
 
-		// Remove from the deleted layers so we can't accidentally revert if the user presses cancel
+		// Remove from the deleted layers so we can't accidently revert if the user presses cancel
 		this._deletedLayers.removeLayer(layer);
 	},
 
@@ -4814,23 +2740,16 @@ L.EditToolbar.Delete = L.Handler.extend({
 		this._deletableLayers.removeLayer(layer);
 
 		this._deletedLayers.addLayer(layer);
-
-		layer.fire('deleted');
 	},
 
 	_onMouseMove: function (e) {
 		this._tooltip.updatePosition(e.latlng);
-	},
-
-	_hasAvailableLayers: function () {
-		return this._deletableLayers.getLayers().length !== 0;
 	}
 });
 
 
+}(this, document));
 
-}(window, document));
-//# sourceMappingURL=leaflet.draw-src.map
   // Spectrum Colorpicker v1.2.0
 // https://github.com/bgrins/spectrum
 // Author: Brian Grinstead
@@ -6846,7 +4765,7 @@ L.EditToolbar.Delete = L.Handler.extend({
 
   window.plugin.drawTools.boot();
 
-  $('head').append('<style>/* ================================================================== */\n/* Toolbars\n/* ================================================================== */\n\n.leaflet-draw-section {\n	position: relative;\n}\n\n.leaflet-draw-toolbar {\n	margin-top: 12px;\n}\n\n.leaflet-draw-toolbar-top {\n	margin-top: 0;\n}\n\n.leaflet-draw-toolbar-notop a:first-child {\n	border-top-right-radius: 0;\n}\n\n.leaflet-draw-toolbar-nobottom a:last-child {\n	border-bottom-right-radius: 0;\n}\n\n.leaflet-draw-toolbar a {\n	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAAAeCAYAAABZs0CNAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAtVJREFUeNrsmlFy2jAQhkWG93CD0hM0PUHhhdfADeAECScInAA4QblBeOYFcoK6Jyg5QdwTtLvp747GhNgmWttx/m/GY42s8Uqy/l1JlnOEEEIIIYQQQgghhBBCCCGEHNNiF5C6MxgMOnIbb7fbpcG7Z3K7S2XPxdasyHvaASv0J0lLJVpGDb6Ra4OGHho+eLpyG8rVQVasbbduNwat2u0i6wC7sbHNq3S+2Nzj2U6fS/qL5E0MqvBfOBhn1UQkNPZJBaSCCi0keedYbt9T2WtLQfmO4TWMnMat3BYnHk8tPDPs6mC+90TkPDGNxG5kICC113vhsX7fKdLaFzoGJlKHtVEUyhSZqZB8j2ExuE6IyFxQVQkpQ0RmYsJ3/AERafRZ4dENoqL279eQkUls7iCiA64EFewc40rp6/jSCFXXGUQ7oIi08f3AHZ0lIgdPNW7Ceg/TuUWOogspG3qa50/n+kn0UTuewIZwXKF4FpHY+pzhnHtSZlPC2uisaPQmIdVERE1jWLBsyKjU9aJs5KflWxyVCcgmQ0STVLQKujYK9aKLOooIFBFR1BAhdYzKnrNWOkoLlwbmfmeIKPKmeLXloqYicgWnEHFDhPSpQtt+H+506oPpjz+IH43rcOuLCBsLQ0unUYmQShRREnbzvvuhIUL6WaHzWKei3R2uzpnO7S0E2Z2rpZBKFpHDQnr1wSLSxqhsnv6OM9YMc8vvjTrMdBf0vYkot5CwFfxUlog8ljlF0og1EpzHNEfRqdH/s+WJhf0h8MaGz3We59jRrC3tAh+5BUGVJaJnLyk2V+71bcrY2e3qVCGmJXbJSv8hi/4eYebhn6gYGX3zvVw9/E96aXr+Dc57X/eTLLn+vVgf/8lh/5f7t/W6h2gekY7KEnUFbe66Co4IwXZywsE5gxMNqeXCqZMNvtiCCzn0fyRCCCGEEEIIIYQQQgghhBBCCCFG/BVgAMuWWtfqVjkMAAAAAElFTkSuQmCC);\n	background-image: linear-gradient(transparent, transparent), url(data:image/png;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKCXhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIKCXhtbG5zOmNjPSJodHRwOi8vY3JlYXRpdmVjb21tb25zLm9yZy9ucyMiCgl4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCgl4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCgl4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIKCXhtbG5zOnNvZGlwb2RpPSJodHRwOi8vc29kaXBvZGkuc291cmNlZm9yZ2UubmV0L0RURC9zb2RpcG9kaS0wLmR0ZCIKCXhtbG5zOmlua3NjYXBlPSJodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy9uYW1lc3BhY2VzL2lua3NjYXBlIgoJdmlld0JveD0iMCAwIDYwMCA2MCIKCWhlaWdodD0iNjAiCgl3aWR0aD0iNjAwIgoJaWQ9InN2ZzQyMjUiCgl2ZXJzaW9uPSIxLjEiCglpbmtzY2FwZTp2ZXJzaW9uPSIwLjkxIHIxMzcyNSIKCXNvZGlwb2RpOmRvY25hbWU9InNwcml0ZXNoZWV0LnN2ZyIKCWlua3NjYXBlOmV4cG9ydC1maWxlbmFtZT0iL2hvbWUvZnB1Z2EvZGV2ZWxvcG1lbnQvdXBzdHJlYW0vaWNhcnRvLkxlYWZsZXQuZHJhdy9zcmMvaW1hZ2VzL3Nwcml0ZXNoZWV0LTJ4LnBuZyIKCWlua3NjYXBlOmV4cG9ydC14ZHBpPSI5MCIKCWlua3NjYXBlOmV4cG9ydC15ZHBpPSI5MCI+Cgk8bWV0YWRhdGEKCQlpZD0ibWV0YWRhdGE0MjU4Ij4KCQk8cmRmOlJERj4KCQkJPGNjOldvcmsKCQkJCXJkZjphYm91dD0iIj4KCQkJCTxkYzpmb3JtYXQ+aW1hZ2Uvc3ZnK3htbDwvZGM6Zm9ybWF0PgoJCQkJPGRjOnR5cGUKCQkJCQlyZGY6cmVzb3VyY2U9Imh0dHA6Ly9wdXJsLm9yZy9kYy9kY21pdHlwZS9TdGlsbEltYWdlIi8+CgkJCQk8ZGM6dGl0bGUvPgoJCQk8L2NjOldvcms+CgkJPC9yZGY6UkRGPgoJPC9tZXRhZGF0YT4KCTxkZWZzCgkJaWQ9ImRlZnM0MjU2Ii8+Cgk8c29kaXBvZGk6bmFtZWR2aWV3CgkJcGFnZWNvbG9yPSIjZmZmZmZmIgoJCWJvcmRlcmNvbG9yPSIjNjY2NjY2IgoJCWJvcmRlcm9wYWNpdHk9IjEiCgkJb2JqZWN0dG9sZXJhbmNlPSIxMCIKCQlncmlkdG9sZXJhbmNlPSIxMCIKCQlndWlkZXRvbGVyYW5jZT0iMTAiCgkJaW5rc2NhcGU6cGFnZW9wYWNpdHk9IjAiCgkJaW5rc2NhcGU6cGFnZXNoYWRvdz0iMiIKCQlpbmtzY2FwZTp3aW5kb3ctd2lkdGg9IjE5MjAiCgkJaW5rc2NhcGU6d2luZG93LWhlaWdodD0iMTA1NiIKCQlpZD0ibmFtZWR2aWV3NDI1NCIKCQlzaG93Z3JpZD0iZmFsc2UiCgkJaW5rc2NhcGU6em9vbT0iMS4zMTAxODUyIgoJCWlua3NjYXBlOmN4PSIyMzcuNTY5MjgiCgkJaW5rc2NhcGU6Y3k9IjcuMjQxOTYyMSIKCQlpbmtzY2FwZTp3aW5kb3cteD0iMTkyMCIKCQlpbmtzY2FwZTp3aW5kb3cteT0iMjQiCgkJaW5rc2NhcGU6d2luZG93LW1heGltaXplZD0iMSIKCQlpbmtzY2FwZTpjdXJyZW50LWxheWVyPSJzdmc0MjI1Ii8+Cgk8ZwoJCWlkPSJlbmFibGVkIgoJCXN0eWxlPSJmaWxsOiM0NjQ2NDY7ZmlsbC1vcGFjaXR5OjEiPgoJCTxnCgkJCWlkPSJwb2x5bGluZSIKCQkJc3R5bGU9ImZpbGw6IzQ2NDY0NjtmaWxsLW9wYWNpdHk6MSI+CgkJCTxwYXRoCgkJCQlkPSJtIDE4LDM2IDAsNiA2LDAgMCwtNiAtNiwwIHogbSA0LDQgLTIsMCAwLC0yIDIsMCAwLDIgeiIKCQkJCWlkPSJwYXRoNDIyOSIKCQkJCWlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiCgkJCQlzdHlsZT0iZmlsbDojNDY0NjQ2O2ZpbGwtb3BhY2l0eToxIi8+CgkJCTxwYXRoCgkJCQlkPSJtIDM2LDE4IDAsNiA2LDAgMCwtNiAtNiwwIHogbSA0LDQgLTIsMCAwLC0yIDIsMCAwLDIgeiIKCQkJCWlkPSJwYXRoNDIzMSIKCQkJCWlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiCgkJCQlzdHlsZT0iZmlsbDojNDY0NjQ2O2ZpbGwtb3BhY2l0eToxIi8+CgkJCTxwYXRoCgkJCQlkPSJtIDIzLjE0MiwzOS4xNDUgLTIuMjg1LC0yLjI5IDE2LC0xNS45OTggMi4yODUsMi4yODUgeiIKCQkJCWlkPSJwYXRoNDIzMyIKCQkJCWlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiCgkJCQlzdHlsZT0iZmlsbDojNDY0NjQ2O2ZpbGwtb3BhY2l0eToxIi8+CgkJPC9nPgoJCTxwYXRoCgkJCWlkPSJwb2x5Z29uIgoJCQlkPSJNIDEwMCwyNC41NjUgOTcuOTA0LDM5LjM5NSA4My4wNyw0MiA3NiwyOC43NzMgODYuNDYzLDE4IFoiCgkJCWlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiCgkJCXN0eWxlPSJmaWxsOiM0NjQ2NDY7ZmlsbC1vcGFjaXR5OjEiLz4KCQk8cGF0aAoJCQlpZD0icmVjdGFuZ2xlIgoJCQlkPSJtIDE0MCwyMCAyMCwwIDAsMjAgLTIwLDAgeiIKCQkJaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIKCQkJc3R5bGU9ImZpbGw6IzQ2NDY0NjtmaWxsLW9wYWNpdHk6MSIvPgoJCTxwYXRoCgkJCWlkPSJjaXJjbGUiCgkJCWQ9Im0gMjIxLDMwIGMgMCw2LjA3OCAtNC45MjYsMTEgLTExLDExIC02LjA3NCwwIC0xMSwtNC45MjIgLTExLC0xMSAwLC02LjA3NCA0LjkyNiwtMTEgMTEsLTExIDYuMDc0LDAgMTEsNC45MjYgMTEsMTEgeiIKCQkJaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIKCQkJc3R5bGU9ImZpbGw6IzQ2NDY0NjtmaWxsLW9wYWNpdHk6MSIvPgoJCTxwYXRoCgkJCWlkPSJtYXJrZXIiCgkJCWQ9Im0gMjcwLDE5IGMgLTQuOTcxLDAgLTksNC4wMjkgLTksOSAwLDQuOTcxIDUuMDAxLDEyIDksMTQgNC4wMDEsLTIgOSwtOS4wMjkgOSwtMTQgMCwtNC45NzEgLTQuMDI5LC05IC05LC05IHogbSAwLDEyLjUgYyAtMi40ODQsMCAtNC41LC0yLjAxNCAtNC41LC00LjUgMCwtMi40ODQgMi4wMTYsLTQuNSA0LjUsLTQuNSAyLjQ4NSwwIDQuNSwyLjAxNiA0LjUsNC41IDAsMi40ODYgLTIuMDE1LDQuNSAtNC41LDQuNSB6IgoJCQlpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIgoJCQlzdHlsZT0iZmlsbDojNDY0NjQ2O2ZpbGwtb3BhY2l0eToxIi8+CgkJPGcKCQkJaWQ9ImVkaXQiCgkJCXN0eWxlPSJmaWxsOiM0NjQ2NDY7ZmlsbC1vcGFjaXR5OjEiPgoJCQk8cGF0aAoJCQkJZD0ibSAzMzcsMzAuMTU2IDAsMC40MDcgMCw1LjYwNCBjIDAsMS42NTggLTEuMzQ0LDMgLTMsMyBsIC0xMCwwIGMgLTEuNjU1LDAgLTMsLTEuMzQyIC0zLC0zIGwgMCwtMTAgYyAwLC0xLjY1NyAxLjM0NSwtMyAzLC0zIGwgNi4zNDUsMCAzLjE5LC0zLjE3IC05LjUzNSwwIGMgLTMuMzEzLDAgLTYsMi42ODcgLTYsNiBsIDAsMTAgYyAwLDMuMzEzIDIuNjg3LDYgNiw2IGwgMTAsMCBjIDMuMzE0LDAgNiwtMi42ODcgNiwtNiBsIDAsLTguODA5IC0zLDIuOTY4IgoJCQkJaWQ9InBhdGg0MjQwIgoJCQkJaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIKCQkJCXN0eWxlPSJmaWxsOiM0NjQ2NDY7ZmlsbC1vcGFjaXR5OjEiLz4KCQkJPHBhdGgKCQkJCWQ9Im0gMzM4LjcyLDI0LjYzNyAtOC44OTIsOC44OTIgLTIuODI4LDAgMCwtMi44MjkgOC44OSwtOC44OSB6IgoJCQkJaWQ9InBhdGg0MjQyIgoJCQkJaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIKCQkJCXN0eWxlPSJmaWxsOiM0NjQ2NDY7ZmlsbC1vcGFjaXR5OjEiLz4KCQkJPHBhdGgKCQkJCWQ9Im0gMzM4LjY5NywxNy44MjYgNCwwIDAsNCAtNCwwIHoiCgkJCQl0cmFuc2Zvcm09Im1hdHJpeCgtMC43MDY5ODMzNiwtMC43MDcyMzAxOCwwLjcwNzIzMDE4LC0wLjcwNjk4MzM2LDU2Ny41NTkxNywyNzQuNzgyNzMpIgoJCQkJaWQ9InBhdGg0MjQ0IgoJCQkJaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIKCQkJCXN0eWxlPSJmaWxsOiM0NjQ2NDY7ZmlsbC1vcGFjaXR5OjEiLz4KCQk8L2c+CgkJPGcKCQkJaWQ9InJlbW92ZSIKCQkJc3R5bGU9ImZpbGw6IzQ2NDY0NjtmaWxsLW9wYWNpdHk6MSI+CgkJCTxwYXRoCgkJCQlkPSJtIDM4MSw0MiAxOCwwIDAsLTE4IC0xOCwwIDAsMTggeiBtIDE0LC0xNiAyLDAgMCwxNCAtMiwwIDAsLTE0IHogbSAtNCwwIDIsMCAwLDE0IC0yLDAgMCwtMTQgeiBtIC00LDAgMiwwIDAsMTQgLTIsMCAwLC0xNCB6IG0gLTQsMCAyLDAgMCwxNCAtMiwwIDAsLTE0IHoiCgkJCQlpZD0icGF0aDQyNDciCgkJCQlpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIgoJCQkJc3R5bGU9ImZpbGw6IzQ2NDY0NjtmaWxsLW9wYWNpdHk6MSIvPgoJCQk8cGF0aAoJCQkJZD0ibSAzOTUsMjAgMCwtNCAtMTAsMCAwLDQgLTYsMCAwLDIgMjIsMCAwLC0yIC02LDAgeiBtIC0yLDAgLTYsMCAwLC0yIDYsMCAwLDIgeiIKCQkJCWlkPSJwYXRoNDI0OSIKCQkJCWlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiCgkJCQlzdHlsZT0iZmlsbDojNDY0NjQ2O2ZpbGwtb3BhY2l0eToxIi8+CgkJPC9nPgoJPC9nPgoJPGcKCQlpZD0iZGlzYWJsZWQiCgkJdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTIwLDApIgoJCXN0eWxlPSJmaWxsOiNiYmJiYmIiPgoJCTx1c2UKCQkJeGxpbms6aHJlZj0iI2VkaXQiCgkJCWlkPSJlZGl0LWRpc2FibGVkIgoJCQl4PSIwIgoJCQl5PSIwIgoJCQl3aWR0aD0iMTAwJSIKCQkJaGVpZ2h0PSIxMDAlIi8+CgkJPHVzZQoJCQl4bGluazpocmVmPSIjcmVtb3ZlIgoJCQlpZD0icmVtb3ZlLWRpc2FibGVkIgoJCQl4PSIwIgoJCQl5PSIwIgoJCQl3aWR0aD0iMTAwJSIKCQkJaGVpZ2h0PSIxMDAlIi8+Cgk8L2c+Cgk8cGF0aAoJCXN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiM0NjQ2NDY7c3Ryb2tlLXdpZHRoOjI7c3Ryb2tlLW1pdGVybGltaXQ6NDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MSIKCQlpZD0iY2lyY2xlLTMiCgkJZD0ibSA1ODEuNjU3MjUsMzAgYyAwLDYuMDc4IC00LjkyNiwxMSAtMTEsMTEgLTYuMDc0LDAgLTExLC00LjkyMiAtMTEsLTExIDAsLTYuMDc0IDQuOTI2LC0xMSAxMSwtMTEgNi4wNzQsMCAxMSw0LjkyNiAxMSwxMSB6IgoJCWlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiLz4KPC9zdmc+Cg==);\n	background-repeat: no-repeat;\n	background-size: 300px 30px;\n	background-clip: padding-box;\n}\n\n.leaflet-retina .leaflet-draw-toolbar a {\n	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAA8CAYAAAC6nMS5AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAA16SURBVHic7d1/jBxneQfw7zNzvotdn+9sVQkxoRKoammBqqpbk6uT5mLfvHPn42yn1VFRVCEhoFH5IYpoSaUCKi1NcGkcfrbCVRFKEwG2aHLn83pmLvY2CTqT1AmCOBE0EOT4B0nBPw/snb2dp3/sLr6s77i923dud/a+H8ny7tzMo8f3eud99p133gGIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiFYGaXYCRETUPMYYrWe/MAzZX2QQ27d5OpqdABFROxgZGVlz5cqVrzuOc18QBJPNzofsYvvSYrVcgTVftZ2l6npgYODXHMc5oKoHHcfZHQTB2WbnRETpGRkZWVMoFA6IyO2qutX3/R1Z64TnO8fWOwLSzti+mSKDg4M3l0qlnSJyG4CbAFwP4ByAlwE8paoPX3fddcH4+PjP00yk5QqsrDPGvAZAHsBrReRNqvpeY8x/iMg9QRCcaXJ6ZIHv+xtUdReAHQBej/IHGABOAnhORMY6OjoempiYONe0JC3zPM84jjOqqrfi6r/3RQCPAdgXhmHUvOyaa3R01L1w4cJBALdVNq1W1THP87woir7ZzNyocWzf7PA8b4uI7E6S5A9Frqknb6j8eZOIvKNQKPzU9/1/dhznvlwuV0gjn5YbFapW09Vqu/Z9K9u2bdsNruvmUe50axUAfMV13X/I5XInlzcze2x/28lCu1b19fWt7u7u/hCAvwGwboHdL6jq7unp6T1TU1OXlyG9VAwODv5mkiR7Ady6wK6Plkqldz/yyCPfX468bBkaGuqamZm5E8DbReQNANYscMiLIrI1CILnZ280xrwHwL+hck4VkacBDLTS6HVaIxWt/Blm+zauldu3atOmTas2bNjwWRG5s7LplKp+VUQOuq77/bVr17589uzZ9SKy0XGcAVUdFZE/qOx7zHXdXWn0yy31i6sMw/4MyF6BZYy5XlWPiMhvL7BrrKpfcxznE7Uf4ixYqQWW53kbATw060NZr28nSbJzcnLyRBp5pcnzvNtE5CEAvXUecg7ArjAMH00xLWuGhoZuKpVKEwB+p85DXnRd9/ZcLvcDAOjv778un88XAChwtRMWkW+jxTpfYOV1wGxfO1q1fav6+vpWr1u3blxVtwH4uar+/fT09OcW+mJrjBkBcC+AXwdwBoAJw/AZm7m1zC+uUlyNA9g6189buZH7+/t/tbOz8wiANy7isKKqftV13U8eOnToe2nlZttKLLAqJ+qjAF69xBAnZ2Zmbj58+PApm3mlqTJydRTXFldHAUxVXvcBuLnm5+dU9c1RFP1v2jk2YmhoqKtUKj2B+jvfE0mS3D45OflD4OqcHADPh2H4F6h0wp7nva1YLOby+fz5dDKnerB9Vwzxff8BVX0bgFMAdoZheKzeg4eHh9cXi8WvAfAAvOC67ptzudz/WUvOVqBGVO7OmBCR/vn2adWOuL+/v7ezs3MSwKYlhkgAHBSRjwdB8JTF1FKx0gqsymXBxwH8XoOh/ieO41vz+fwVG3mlzRjzKF55WfA8gD8LwzA3ez/P87aLyIMAeqrbVDUfRdHty5Pp0hhjPgDgM9X3qnq/iNwPYM5RCdd1T1RPvLM63+q/ce/sTpiaj+27Mvi+f6eq/iuAi67r9uVyuWcXG6NSjB8B0KeqE1EUvcVWfk3v3OYZuXosjuPt+Xx+ull51WNgYKBHRKIlXDaaS6Kq+6Mo+lMLsVKz0gosz/M+KiKfsBTub8MwvMdSrNQYYzwAYc3m7bXFVZXv+8OqemD2NlUdiKLokbRybJQx5lsANlfefi4Mww/UedyvADgI4I9mbxeRDwdB8C92s0yHrc9wK3922b6Na+X2BYD+/v61nZ2dz6M8cX00DMP9S421ffv2V83MzDwHoNfmucuxEWSpslxcjYyMrHEcZ8xScQUAjoj8vqVYZIHv+xtE5MMWQ941PDy83mK8VIjIW2s2HZ2vuAKAIAgmADyxQIxWM3uu5J56DhgZGVkDYBw1nS+ApwB82VJeZAfbt82tWrXqPSgXV481UlwBwMGDB3+sqncDgIh81EZ+QBMLrKwXV5Uh5NoPYqMyN+m9nanqHVj4bsHF6InjeKfFeKmoLMUw+/2Ct6KLyOM1m2x/NmxbW30RhuGPFtp5jstGVU+JiNdqE57rEYahzB6lWOz7Fsf2be/2hYj8SeXlvTbiFYvFLwK4DOAWY8z1NmI2pcDKcnE1OjraWSgU9uPaD2LDRKSlJwavQCO2A4rIDtsxU7BxsQeoau2Jeak3BDTDL72kUm/n63neaFoJUkPYvm3G9/0NKN9gc7mrq6t2OsOSVGqPSQCuiAzaiLnsBVaWiysAuHDhwn4AQ2nEVtUfpBGXluwNKcRcaBmPVpDMfiMiW+o4pnafZM69MmYxnW9lsj9lCNs3m1T1tSjXL89aXo39WCX+62wEW9YCK+vFVcXLKcbmJcLW8qoUYmZhZOfFmvc3e563fb6djTFvwdUJxfPFyJx6O1/f999a6Xz5ZIwMYftm2o2Vv60+HUVETldeLnoUfy7LVmC1SXEFVf0YgFSeX5QkCQus9tfyIzsicnSObQ/6vj9cu71SXP1nPTGyplAo5FDT+arqk3Ecb5s9J0dV2flmENs3u0REgTmnJjRkVjwrd2Iuy3+adimuACCKotPGmC8A+GvLoZOZmZkXLMekBojIaVX9DcthTy+8S3MlSTIuIu+q2dyjqgeMMU8A+CYAUdUtAOa8izZJkvG081wG19xN5jjO4ByLTLrLlRBZxfbNrjMAICI3LrTjIlVHrqyMjKU+gtVOxVVVHMf/hHkWrGvAiawsQrlSqOqiF61rRkzbOjo6AsxfCG4G8FcAPvhLlih5qVgsWpl42kIyezcZ1YXtmy0/QvlqwG9V1i6zZRMAiIiV+dCpFljtWFwBQOUbzqcth+XlwdZjfRRGRMZsx7St8mT5zzcQ4r52+LKgqp9S1U8B+GTtZSPKPrZvdlXaagrAalU1NmJWCrVtAEqO4xyyETO1S4TtWlxVXbp06b7u7u6/BHCTjXiqygKrxYjIQ6p6L2Y9BqZB51etWtXyBRYAuK77hVKp9H5cnUxarzOu634xjZyWWxRFdzU7B0oP2zfbVPUbIrLFcZwPAfivRuOJyPtUdbWq5m09jzCVEax2L64AYGpq6rKq/qOteI7jsMBqMUEQnFXV3bbiqerdExMT52zFS1Mul7soIovugETkI7lc7mIaORERVRWLxS8BeElVb/F9v6EnR/i+f6Oq3gUAjuPYejSavQLLGKPVP4VC4Wd4ZXF1pKura7Bdiquq3t7efwfwnKVwLLBa0PT09B5U1kZp0BPFYvGzFuIsmyAI7kf5uWz1OhgEwTV3FLaoX5yLKosWLknNsZcayohsYvu2uUo98TEAUNW9vu8vad3CoaGhLlX9BoBeAONBEByxleNyLNPwWBzHOywvBtYS9u3bV1LVj1sKxwKrBU1NTV12XXcXgFMNhDmpqndkcF6SisifAzhRx76n4jh+Byzd3rwMjldfqOqSV+xPkmT2yvzH592RlhvbdwUIw3AvgAcArFPVcHBwcFHPBvZ9f0OpVDqA8qrwL8Rx/E6b+VkvsGqfZ9ROlwXnEkXRfgDfajCMXrx48Yc28iH7crncSVXdrKpPLvZYEXk6SZItURS1/PIMcwmC4KzjOCMAam9dn+0SgJ35fP4ny5SWDQ/Mer3HGLPoTtgYMyIiv3gOmqpmZfRuJWD7rgwax/G7UH7EzcYkSf7bGHNXX1/f6oUO9H1/Z+WcPoDysgw7bJ/DUl8Hq52LqwoVkb9T1WiRx8UoX158RlWfnJqaupxCbmRJFEWn+/r6buvu7v4ggI9g4Ynv50XknkKh8JkMjly9wqFDh77j+/6oqo4BqD1xXRaRPw6CwMZl1GXjuu6XSqXSOwH8LoD1AMaMMecA1PtF53WV4wCUC+menp699jOlpWD7rhz5fP5Kf3//UFdX132q+l4Ad3d3d7/fGPN1EZlQ1e/19PS8dPbs2fWu694kIgOqOqqqm4Dy4rKlUumOw4cPN3KVYk7WVkE1xsx5aSBLT+duhDEmQrkSnssZlIeXnxWRY6p6PI7j41nveFeq4eHh9XEc7xSRnQBej6t3kp5EuWh+OI7jh+dYsDDTfN/frKrjAKpPmv9pkiS7JicnH29mXku1devWV3d0dBxAuRNeMhF5ulgsjqRxgk7DfOfqxWr1czvbtzGt3r5zGRwc7FPV3ap6y0L7ishPAHx63bp1e/bt2xenkQ8LLEuMMZtE5JCqfhfAMwCeSZLkO2vWrDk+NjbGyZHUFjzP2yginwcAVX1fVi99Vo2OjnaeP3/+3SLydgBvBNBd56GXAHxXVR/s7e3dm9YJOg0rqQNm+y5dFtp3HmKM2QxgF8qr9b8GwA0AzgH4MYBjIjJ28eLFkFeOiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIhWgv8Hnffz4dmwY9cAAAAASUVORK5CYII=);\n	background-image: linear-gradient(transparent, transparent), url(data:image/png;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKCXhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIKCXhtbG5zOmNjPSJodHRwOi8vY3JlYXRpdmVjb21tb25zLm9yZy9ucyMiCgl4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCgl4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCgl4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIKCXhtbG5zOnNvZGlwb2RpPSJodHRwOi8vc29kaXBvZGkuc291cmNlZm9yZ2UubmV0L0RURC9zb2RpcG9kaS0wLmR0ZCIKCXhtbG5zOmlua3NjYXBlPSJodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy9uYW1lc3BhY2VzL2lua3NjYXBlIgoJdmlld0JveD0iMCAwIDYwMCA2MCIKCWhlaWdodD0iNjAiCgl3aWR0aD0iNjAwIgoJaWQ9InN2ZzQyMjUiCgl2ZXJzaW9uPSIxLjEiCglpbmtzY2FwZTp2ZXJzaW9uPSIwLjkxIHIxMzcyNSIKCXNvZGlwb2RpOmRvY25hbWU9InNwcml0ZXNoZWV0LnN2ZyIKCWlua3NjYXBlOmV4cG9ydC1maWxlbmFtZT0iL2hvbWUvZnB1Z2EvZGV2ZWxvcG1lbnQvdXBzdHJlYW0vaWNhcnRvLkxlYWZsZXQuZHJhdy9zcmMvaW1hZ2VzL3Nwcml0ZXNoZWV0LTJ4LnBuZyIKCWlua3NjYXBlOmV4cG9ydC14ZHBpPSI5MCIKCWlua3NjYXBlOmV4cG9ydC15ZHBpPSI5MCI+Cgk8bWV0YWRhdGEKCQlpZD0ibWV0YWRhdGE0MjU4Ij4KCQk8cmRmOlJERj4KCQkJPGNjOldvcmsKCQkJCXJkZjphYm91dD0iIj4KCQkJCTxkYzpmb3JtYXQ+aW1hZ2Uvc3ZnK3htbDwvZGM6Zm9ybWF0PgoJCQkJPGRjOnR5cGUKCQkJCQlyZGY6cmVzb3VyY2U9Imh0dHA6Ly9wdXJsLm9yZy9kYy9kY21pdHlwZS9TdGlsbEltYWdlIi8+CgkJCQk8ZGM6dGl0bGUvPgoJCQk8L2NjOldvcms+CgkJPC9yZGY6UkRGPgoJPC9tZXRhZGF0YT4KCTxkZWZzCgkJaWQ9ImRlZnM0MjU2Ii8+Cgk8c29kaXBvZGk6bmFtZWR2aWV3CgkJcGFnZWNvbG9yPSIjZmZmZmZmIgoJCWJvcmRlcmNvbG9yPSIjNjY2NjY2IgoJCWJvcmRlcm9wYWNpdHk9IjEiCgkJb2JqZWN0dG9sZXJhbmNlPSIxMCIKCQlncmlkdG9sZXJhbmNlPSIxMCIKCQlndWlkZXRvbGVyYW5jZT0iMTAiCgkJaW5rc2NhcGU6cGFnZW9wYWNpdHk9IjAiCgkJaW5rc2NhcGU6cGFnZXNoYWRvdz0iMiIKCQlpbmtzY2FwZTp3aW5kb3ctd2lkdGg9IjE5MjAiCgkJaW5rc2NhcGU6d2luZG93LWhlaWdodD0iMTA1NiIKCQlpZD0ibmFtZWR2aWV3NDI1NCIKCQlzaG93Z3JpZD0iZmFsc2UiCgkJaW5rc2NhcGU6em9vbT0iMS4zMTAxODUyIgoJCWlua3NjYXBlOmN4PSIyMzcuNTY5MjgiCgkJaW5rc2NhcGU6Y3k9IjcuMjQxOTYyMSIKCQlpbmtzY2FwZTp3aW5kb3cteD0iMTkyMCIKCQlpbmtzY2FwZTp3aW5kb3cteT0iMjQiCgkJaW5rc2NhcGU6d2luZG93LW1heGltaXplZD0iMSIKCQlpbmtzY2FwZTpjdXJyZW50LWxheWVyPSJzdmc0MjI1Ii8+Cgk8ZwoJCWlkPSJlbmFibGVkIgoJCXN0eWxlPSJmaWxsOiM0NjQ2NDY7ZmlsbC1vcGFjaXR5OjEiPgoJCTxnCgkJCWlkPSJwb2x5bGluZSIKCQkJc3R5bGU9ImZpbGw6IzQ2NDY0NjtmaWxsLW9wYWNpdHk6MSI+CgkJCTxwYXRoCgkJCQlkPSJtIDE4LDM2IDAsNiA2LDAgMCwtNiAtNiwwIHogbSA0LDQgLTIsMCAwLC0yIDIsMCAwLDIgeiIKCQkJCWlkPSJwYXRoNDIyOSIKCQkJCWlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiCgkJCQlzdHlsZT0iZmlsbDojNDY0NjQ2O2ZpbGwtb3BhY2l0eToxIi8+CgkJCTxwYXRoCgkJCQlkPSJtIDM2LDE4IDAsNiA2LDAgMCwtNiAtNiwwIHogbSA0LDQgLTIsMCAwLC0yIDIsMCAwLDIgeiIKCQkJCWlkPSJwYXRoNDIzMSIKCQkJCWlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiCgkJCQlzdHlsZT0iZmlsbDojNDY0NjQ2O2ZpbGwtb3BhY2l0eToxIi8+CgkJCTxwYXRoCgkJCQlkPSJtIDIzLjE0MiwzOS4xNDUgLTIuMjg1LC0yLjI5IDE2LC0xNS45OTggMi4yODUsMi4yODUgeiIKCQkJCWlkPSJwYXRoNDIzMyIKCQkJCWlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiCgkJCQlzdHlsZT0iZmlsbDojNDY0NjQ2O2ZpbGwtb3BhY2l0eToxIi8+CgkJPC9nPgoJCTxwYXRoCgkJCWlkPSJwb2x5Z29uIgoJCQlkPSJNIDEwMCwyNC41NjUgOTcuOTA0LDM5LjM5NSA4My4wNyw0MiA3NiwyOC43NzMgODYuNDYzLDE4IFoiCgkJCWlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiCgkJCXN0eWxlPSJmaWxsOiM0NjQ2NDY7ZmlsbC1vcGFjaXR5OjEiLz4KCQk8cGF0aAoJCQlpZD0icmVjdGFuZ2xlIgoJCQlkPSJtIDE0MCwyMCAyMCwwIDAsMjAgLTIwLDAgeiIKCQkJaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIKCQkJc3R5bGU9ImZpbGw6IzQ2NDY0NjtmaWxsLW9wYWNpdHk6MSIvPgoJCTxwYXRoCgkJCWlkPSJjaXJjbGUiCgkJCWQ9Im0gMjIxLDMwIGMgMCw2LjA3OCAtNC45MjYsMTEgLTExLDExIC02LjA3NCwwIC0xMSwtNC45MjIgLTExLC0xMSAwLC02LjA3NCA0LjkyNiwtMTEgMTEsLTExIDYuMDc0LDAgMTEsNC45MjYgMTEsMTEgeiIKCQkJaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIKCQkJc3R5bGU9ImZpbGw6IzQ2NDY0NjtmaWxsLW9wYWNpdHk6MSIvPgoJCTxwYXRoCgkJCWlkPSJtYXJrZXIiCgkJCWQ9Im0gMjcwLDE5IGMgLTQuOTcxLDAgLTksNC4wMjkgLTksOSAwLDQuOTcxIDUuMDAxLDEyIDksMTQgNC4wMDEsLTIgOSwtOS4wMjkgOSwtMTQgMCwtNC45NzEgLTQuMDI5LC05IC05LC05IHogbSAwLDEyLjUgYyAtMi40ODQsMCAtNC41LC0yLjAxNCAtNC41LC00LjUgMCwtMi40ODQgMi4wMTYsLTQuNSA0LjUsLTQuNSAyLjQ4NSwwIDQuNSwyLjAxNiA0LjUsNC41IDAsMi40ODYgLTIuMDE1LDQuNSAtNC41LDQuNSB6IgoJCQlpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIgoJCQlzdHlsZT0iZmlsbDojNDY0NjQ2O2ZpbGwtb3BhY2l0eToxIi8+CgkJPGcKCQkJaWQ9ImVkaXQiCgkJCXN0eWxlPSJmaWxsOiM0NjQ2NDY7ZmlsbC1vcGFjaXR5OjEiPgoJCQk8cGF0aAoJCQkJZD0ibSAzMzcsMzAuMTU2IDAsMC40MDcgMCw1LjYwNCBjIDAsMS42NTggLTEuMzQ0LDMgLTMsMyBsIC0xMCwwIGMgLTEuNjU1LDAgLTMsLTEuMzQyIC0zLC0zIGwgMCwtMTAgYyAwLC0xLjY1NyAxLjM0NSwtMyAzLC0zIGwgNi4zNDUsMCAzLjE5LC0zLjE3IC05LjUzNSwwIGMgLTMuMzEzLDAgLTYsMi42ODcgLTYsNiBsIDAsMTAgYyAwLDMuMzEzIDIuNjg3LDYgNiw2IGwgMTAsMCBjIDMuMzE0LDAgNiwtMi42ODcgNiwtNiBsIDAsLTguODA5IC0zLDIuOTY4IgoJCQkJaWQ9InBhdGg0MjQwIgoJCQkJaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIKCQkJCXN0eWxlPSJmaWxsOiM0NjQ2NDY7ZmlsbC1vcGFjaXR5OjEiLz4KCQkJPHBhdGgKCQkJCWQ9Im0gMzM4LjcyLDI0LjYzNyAtOC44OTIsOC44OTIgLTIuODI4LDAgMCwtMi44MjkgOC44OSwtOC44OSB6IgoJCQkJaWQ9InBhdGg0MjQyIgoJCQkJaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIKCQkJCXN0eWxlPSJmaWxsOiM0NjQ2NDY7ZmlsbC1vcGFjaXR5OjEiLz4KCQkJPHBhdGgKCQkJCWQ9Im0gMzM4LjY5NywxNy44MjYgNCwwIDAsNCAtNCwwIHoiCgkJCQl0cmFuc2Zvcm09Im1hdHJpeCgtMC43MDY5ODMzNiwtMC43MDcyMzAxOCwwLjcwNzIzMDE4LC0wLjcwNjk4MzM2LDU2Ny41NTkxNywyNzQuNzgyNzMpIgoJCQkJaWQ9InBhdGg0MjQ0IgoJCQkJaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIKCQkJCXN0eWxlPSJmaWxsOiM0NjQ2NDY7ZmlsbC1vcGFjaXR5OjEiLz4KCQk8L2c+CgkJPGcKCQkJaWQ9InJlbW92ZSIKCQkJc3R5bGU9ImZpbGw6IzQ2NDY0NjtmaWxsLW9wYWNpdHk6MSI+CgkJCTxwYXRoCgkJCQlkPSJtIDM4MSw0MiAxOCwwIDAsLTE4IC0xOCwwIDAsMTggeiBtIDE0LC0xNiAyLDAgMCwxNCAtMiwwIDAsLTE0IHogbSAtNCwwIDIsMCAwLDE0IC0yLDAgMCwtMTQgeiBtIC00LDAgMiwwIDAsMTQgLTIsMCAwLC0xNCB6IG0gLTQsMCAyLDAgMCwxNCAtMiwwIDAsLTE0IHoiCgkJCQlpZD0icGF0aDQyNDciCgkJCQlpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIgoJCQkJc3R5bGU9ImZpbGw6IzQ2NDY0NjtmaWxsLW9wYWNpdHk6MSIvPgoJCQk8cGF0aAoJCQkJZD0ibSAzOTUsMjAgMCwtNCAtMTAsMCAwLDQgLTYsMCAwLDIgMjIsMCAwLC0yIC02LDAgeiBtIC0yLDAgLTYsMCAwLC0yIDYsMCAwLDIgeiIKCQkJCWlkPSJwYXRoNDI0OSIKCQkJCWlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiCgkJCQlzdHlsZT0iZmlsbDojNDY0NjQ2O2ZpbGwtb3BhY2l0eToxIi8+CgkJPC9nPgoJPC9nPgoJPGcKCQlpZD0iZGlzYWJsZWQiCgkJdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTIwLDApIgoJCXN0eWxlPSJmaWxsOiNiYmJiYmIiPgoJCTx1c2UKCQkJeGxpbms6aHJlZj0iI2VkaXQiCgkJCWlkPSJlZGl0LWRpc2FibGVkIgoJCQl4PSIwIgoJCQl5PSIwIgoJCQl3aWR0aD0iMTAwJSIKCQkJaGVpZ2h0PSIxMDAlIi8+CgkJPHVzZQoJCQl4bGluazpocmVmPSIjcmVtb3ZlIgoJCQlpZD0icmVtb3ZlLWRpc2FibGVkIgoJCQl4PSIwIgoJCQl5PSIwIgoJCQl3aWR0aD0iMTAwJSIKCQkJaGVpZ2h0PSIxMDAlIi8+Cgk8L2c+Cgk8cGF0aAoJCXN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiM0NjQ2NDY7c3Ryb2tlLXdpZHRoOjI7c3Ryb2tlLW1pdGVybGltaXQ6NDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MSIKCQlpZD0iY2lyY2xlLTMiCgkJZD0ibSA1ODEuNjU3MjUsMzAgYyAwLDYuMDc4IC00LjkyNiwxMSAtMTEsMTEgLTYuMDc0LDAgLTExLC00LjkyMiAtMTEsLTExIDAsLTYuMDc0IDQuOTI2LC0xMSAxMSwtMTEgNi4wNzQsMCAxMSw0LjkyNiAxMSwxMSB6IgoJCWlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiLz4KPC9zdmc+Cg==);\n}\n\n.leaflet-draw a {\n	display: block;\n	text-align: center;\n	text-decoration: none;\n}\n\n.leaflet-draw a .sr-only {\n	position: absolute;\n	width: 1px;\n	height: 1px;\n	padding: 0;\n	margin: -1px;\n	overflow: hidden;\n	clip: rect(0, 0, 0, 0);\n	border: 0;\n}\n\n/* ================================================================== */\n/* Toolbar actions menu\n/* ================================================================== */\n\n.leaflet-draw-actions {\n	display: none;\n	list-style: none;\n	margin: 0;\n	padding: 0;\n	position: absolute;\n	left: 26px; /* leaflet-draw-toolbar.left + leaflet-draw-toolbar.width */\n	top: 0;\n	white-space: nowrap;\n}\n\n.leaflet-touch .leaflet-draw-actions {\n	left: 32px;\n}\n\n.leaflet-right .leaflet-draw-actions {\n	right: 26px;\n	left: auto;\n}\n\n.leaflet-touch .leaflet-right .leaflet-draw-actions {\n	right: 32px;\n	left: auto;\n}\n\n.leaflet-draw-actions li {\n	display: inline-block;\n}\n\n.leaflet-draw-actions li:first-child a {\n	border-left: none;\n}\n\n.leaflet-draw-actions li:last-child a {\n	-webkit-border-radius: 0 4px 4px 0;\n	border-radius: 0 4px 4px 0;\n}\n\n.leaflet-right .leaflet-draw-actions li:last-child a {\n	-webkit-border-radius: 0;\n	border-radius: 0;\n}\n\n.leaflet-right .leaflet-draw-actions li:first-child a {\n	-webkit-border-radius: 4px 0 0 4px;\n	border-radius: 4px 0 0 4px;\n}\n\n.leaflet-draw-actions a {\n	background-color: #919187;\n	border-left: 1px solid #AAA;\n	color: #FFF;\n	font: 11px/19px "Helvetica Neue", Arial, Helvetica, sans-serif;\n	line-height: 28px;\n	text-decoration: none;\n	padding-left: 10px;\n	padding-right: 10px;\n	height: 28px;\n}\n\n.leaflet-touch .leaflet-draw-actions a {\n	font-size: 12px;\n	line-height: 30px;\n	height: 30px;\n}\n\n.leaflet-draw-actions-bottom {\n	margin-top: 0;\n}\n\n.leaflet-draw-actions-top {\n	margin-top: 1px;\n}\n\n.leaflet-draw-actions-top a,\n.leaflet-draw-actions-bottom a {\n	height: 27px;\n	line-height: 27px;\n}\n\n.leaflet-draw-actions a:hover {\n	background-color: #A0A098;\n}\n\n.leaflet-draw-actions-top.leaflet-draw-actions-bottom a {\n	height: 26px;\n	line-height: 26px;\n}\n\n/* ================================================================== */\n/* Draw toolbar\n/* ================================================================== */\n\n.leaflet-draw-toolbar .leaflet-draw-draw-polyline {\n	background-position: -2px -2px;\n}\n\n.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-draw-polyline {\n	background-position: 0 -1px;\n}\n\n.leaflet-draw-toolbar .leaflet-draw-draw-polygon {\n	background-position: -31px -2px;\n}\n\n.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-draw-polygon {\n	background-position: -29px -1px;\n}\n\n.leaflet-draw-toolbar .leaflet-draw-draw-rectangle {\n	background-position: -62px -2px;\n}\n\n.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-draw-rectangle {\n	background-position: -60px -1px;\n}\n\n.leaflet-draw-toolbar .leaflet-draw-draw-circle {\n	background-position: -92px -2px;\n}\n\n.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-draw-circle {\n	background-position: -90px -1px;\n}\n\n.leaflet-draw-toolbar .leaflet-draw-draw-marker {\n	background-position: -122px -2px;\n}\n\n.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-draw-marker {\n	background-position: -120px -1px;\n}\n\n.leaflet-draw-toolbar .leaflet-draw-draw-circlemarker {\n	background-position: -273px -2px;\n}\n\n.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-draw-circlemarker {\n	background-position: -271px -1px;\n}\n\n/* ================================================================== */\n/* Edit toolbar\n/* ================================================================== */\n\n.leaflet-draw-toolbar .leaflet-draw-edit-edit {\n	background-position: -152px -2px;\n}\n\n.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-edit-edit {\n	background-position: -150px -1px;\n}\n\n.leaflet-draw-toolbar .leaflet-draw-edit-remove {\n	background-position: -182px -2px;\n}\n\n.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-edit-remove {\n	background-position: -180px -1px;\n}\n\n.leaflet-draw-toolbar .leaflet-draw-edit-edit.leaflet-disabled {\n	background-position: -212px -2px;\n}\n\n.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-edit-edit.leaflet-disabled {\n	background-position: -210px -1px;\n}\n\n.leaflet-draw-toolbar .leaflet-draw-edit-remove.leaflet-disabled {\n	background-position: -242px -2px;\n}\n\n.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-edit-remove.leaflet-disabled {\n	background-position: -240px -2px;\n}\n\n/* ================================================================== */\n/* Drawing styles\n/* ================================================================== */\n\n.leaflet-mouse-marker {\n	background-color: #fff;\n	cursor: crosshair;\n}\n\n.leaflet-draw-tooltip {\n	background: rgb(54, 54, 54);\n	background: rgba(0, 0, 0, 0.5);\n	border: 1px solid transparent;\n	-webkit-border-radius: 4px;\n	border-radius: 4px;\n	color: #fff;\n	font: 12px/18px "Helvetica Neue", Arial, Helvetica, sans-serif;\n	margin-left: 20px;\n	margin-top: -21px;\n	padding: 4px 8px;\n	position: absolute;\n	visibility: hidden;\n	white-space: nowrap;\n	z-index: 6;\n}\n\n.leaflet-draw-tooltip:before {\n	border-right: 6px solid black;\n	border-right-color: rgba(0, 0, 0, 0.5);\n	border-top: 6px solid transparent;\n	border-bottom: 6px solid transparent;\n	content: "";\n	position: absolute;\n	top: 7px;\n	left: -7px;\n}\n\n.leaflet-error-draw-tooltip {\n	background-color: #F2DEDE;\n	border: 1px solid #E6B6BD;\n	color: #B94A48;\n}\n\n.leaflet-error-draw-tooltip:before {\n	border-right-color: #E6B6BD;\n}\n\n.leaflet-draw-tooltip-single {\n	margin-top: -12px\n}\n\n.leaflet-draw-tooltip-subtext {\n	color: #f8d5e4;\n}\n\n.leaflet-draw-guide-dash {\n	font-size: 1%;\n	opacity: 0.6;\n	position: absolute;\n	width: 5px;\n	height: 5px;\n}\n\n/* ================================================================== */\n/* Edit styles\n/* ================================================================== */\n\n.leaflet-edit-marker-selected {\n	background-color: rgba(254, 87, 161, 0.1);\n	border: 4px dashed rgba(254, 87, 161, 0.6);\n	-webkit-border-radius: 4px;\n	border-radius: 4px;\n	box-sizing: content-box;\n}\n\n.leaflet-edit-move {\n	cursor: move;\n}\n\n.leaflet-edit-resize {\n	cursor: pointer;\n}\n\n/* ================================================================== */\n/* Old IE styles\n/* ================================================================== */\n\n.leaflet-oldie .leaflet-draw-toolbar {\n	border: 1px solid #999;\n}\n</style>');
+  $('head').append('<style>/* ================================================================== */\n/* Toolbars\n/* ================================================================== */\n\n.leaflet-draw-section {\n	position: relative;\n}\n\n.leaflet-draw-toolbar {\n	margin-top: 12px;\n}\n\n.leaflet-draw-toolbar-top {\n	margin-top: 0;\n}\n\n.leaflet-draw-toolbar-notop a:first-child {\n	border-top-right-radius: 0;\n}\n\n.leaflet-draw-toolbar-nobottom a:last-child {\n	border-bottom-right-radius: 0;\n}\n\n.leaflet-draw-toolbar a {\n	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAAAeCAYAAABZs0CNAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAtVJREFUeNrsmlFy2jAQhkWG93CD0hM0PUHhhdfADeAECScInAA4QblBeOYFcoK6Jyg5QdwTtLvp747GhNgmWttx/m/GY42s8Uqy/l1JlnOEEEIIIYQQQgghhBBCCCGEHNNiF5C6MxgMOnIbb7fbpcG7Z3K7S2XPxdasyHvaASv0J0lLJVpGDb6Ra4OGHho+eLpyG8rVQVasbbduNwat2u0i6wC7sbHNq3S+2Nzj2U6fS/qL5E0MqvBfOBhn1UQkNPZJBaSCCi0keedYbt9T2WtLQfmO4TWMnMat3BYnHk8tPDPs6mC+90TkPDGNxG5kICC113vhsX7fKdLaFzoGJlKHtVEUyhSZqZB8j2ExuE6IyFxQVQkpQ0RmYsJ3/AERafRZ4dENoqL279eQkUls7iCiA64EFewc40rp6/jSCFXXGUQ7oIi08f3AHZ0lIgdPNW7Ceg/TuUWOogspG3qa50/n+kn0UTuewIZwXKF4FpHY+pzhnHtSZlPC2uisaPQmIdVERE1jWLBsyKjU9aJs5KflWxyVCcgmQ0STVLQKujYK9aKLOooIFBFR1BAhdYzKnrNWOkoLlwbmfmeIKPKmeLXloqYicgWnEHFDhPSpQtt+H+506oPpjz+IH43rcOuLCBsLQ0unUYmQShRREnbzvvuhIUL6WaHzWKei3R2uzpnO7S0E2Z2rpZBKFpHDQnr1wSLSxqhsnv6OM9YMc8vvjTrMdBf0vYkot5CwFfxUlog8ljlF0og1EpzHNEfRqdH/s+WJhf0h8MaGz3We59jRrC3tAh+5BUGVJaJnLyk2V+71bcrY2e3qVCGmJXbJSv8hi/4eYebhn6gYGX3zvVw9/E96aXr+Dc57X/eTLLn+vVgf/8lh/5f7t/W6h2gekY7KEnUFbe66Co4IwXZywsE5gxMNqeXCqZMNvtiCCzn0fyRCCCGEEEIIIYQQQgghhBBCCCFG/BVgAMuWWtfqVjkMAAAAAElFTkSuQmCC);\n	background-repeat: no-repeat;\n}\n\n.leaflet-retina .leaflet-draw-toolbar a {\n	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAaQAAAA8CAYAAAApDs6vAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABV1JREFUeNrs3d1R20AUhmHBUIBLcCqI6UDccA0VYFcAqQBTAbgCQwVwzQ1OBTgVxCU4FZA9ydGMoki2flZmz+p9ZjTBxNaw7M+3KwkpSQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALo54lcAAMN1fn7+Ued9r6+vvefFCdUBAF4G9on7581t39zg/chvJIJAqkrrQ6SzxzJM3T9Lt0mjfHI/+4qmBgwijEbS993rxFooVY2xdVdQrJDCbZhLfSnBNHXfk0C6I5iiquNrt6VuGxf+e+O2VUwTEVfekbblK7dNCv+9lrLK5MuVdxtBOSc13rp1ZV3nPjfOhVHGZCh9tqMAG8VHPq2Lrw3NksqYDybfsyVjK9+xTjbSmh+Rep65Mm4M1/eFlnm0b5DWsr4YK5/U6a3bLmqUMTMrBo3bz1JDO//7OMsHV2x9t48+fBzggB7Dkr2KDGRv7r2ypQmsDczvDcIoq+93/azFMssA+1xzoJb3POtnLPXZdw2SxmEkYaarKhmUZ8nfQ/RBhhErJM8Desgz6ZphVDWDfrK0rB/iCkkD5bnjbi4trR52lFkG22ygnVS0+eDLqiuj94Z9Nh9GWZ/faPhs9fv32qcJI6uBVGdAD3Xg6hBGedKo7ywE09ACqeXAlVQM5KcWDt/prP9nSZmljc4L75XXtyVl/RLyOaWSQ2x/JofaF0vrLwuZkj6/zocS2jsJoGGUDegmlryewkjIoCcnQW9dmb/QLIOy9FC/ie5D9nVmoMzTOmGkE4q5nLwvhFJ2EcRDwGXMH0ZduXKcdejz2YVMl0M6ytHHZPL4k38xhNH/wYRw6jhNmp0z2ic1cp70qmR1MN8xMM213+7aR2jy/fauY5/f1t0HAg0kwqjUhiYZ9MDsw7WBcpdd2r3Pes8+Qrbu0OfNXsAgK5z8Kqfp62gCyXgYjXsKIwIpPKmRfaLbwLz1EUZ6XgqWAslyGKm6l8H2MlPDQY2N7PPQK6a27zGnYRhN6TKGAimCMMp+3r78okkiQCO9mq6qX897nKQRRgQSYbRDnycvVzRJBKCsP96WhVLFZd+xrPbrnjMijDw5yGXfEYWRHG9e6b3pUmOrL6DJxGhSEUrXyf4/jI1lchXNBQyskCIMo75XSTT04GyM7NO3xZ5BOtVt1HIfFhFG1gMp0jBK9OaojwMcqIa4UrCwT9/tW9pil1v/vFi+oWyhrrKNMDqA3g7ZxRpGhVXSlECK2iLxf35gYah9X3T4rHl1796AwFdIAwijbBbpc5XE7Cu8Ol57XtGsrLR//Tnb3PrngZUEPn2FtOf+SLEef81mkT4ueeWS7zDJYwV83Vx1ZrR9jxus8s2tjmQC3XZs4jEyBlZIAwmjbJXk6xDMiuYYbB37CBJzD+rTOxjMGpbRypWi+Z+zy/Oq0op9IoRAKrnfUewnAx88NUQac7gDs5zgv2xZR/KZS2tPUs2VfVUzlGbGnoScrw+5nP0me9heg9XRTfLv32C90Fu6OTlAg476eLLMCF3DXCTlfxxYd2W04bh7+KHk6lnqaFCPMNeyP7qyf3Vf3lRNyiw9ZFIVD7fLg/Xu9VEabSeU3PG7I293bq06h2ThiaCeyi8PNBvveIsMZjIw/dCv15FcGjs4etHOtQZTsc43GkSL2CYZ+njyZcnK6NFwPfq4UbKp0xIhPw/pJIHPGddSByTZvmdfGzuUgXqr/tkAyy0rpU0ulGaW27bUoyvPqR7daHNxkgSRHKa7Y3IJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjLbwEGABdIk04CWmrYAAAAAElFTkSuQmCC);\n	background-size: 210px 30px;\n}\n\n.leaflet-draw a {\n	display: block;\n	text-align: center;\n	text-decoration: none;\n}\n\n/* ================================================================== */\n/* Toolbar actions menu\n/* ================================================================== */\n\n.leaflet-draw-actions {\n	display: none;\n	list-style: none;\n	margin: 0;\n	padding: 0;\n	position: absolute;\n	left: 26px; /* leaflet-draw-toolbar.left + leaflet-draw-toolbar.width */\n	top: 0;\n	white-space: nowrap;\n}\n\n.leaflet-right .leaflet-draw-actions {\n	right:26px;\n	left:auto;\n}\n\n.leaflet-draw-actions li {\n	display: inline-block;\n}\n\n.leaflet-draw-actions li:first-child a {\n	border-left: none;\n}\n\n.leaflet-draw-actions li:last-child a {\n	-webkit-border-radius: 0 4px 4px 0;\n	        border-radius: 0 4px 4px 0;\n}\n\n.leaflet-right .leaflet-draw-actions li:last-child a {\n	-webkit-border-radius: 0;\n	        border-radius: 0;\n}\n\n.leaflet-right .leaflet-draw-actions li:first-child a {\n	-webkit-border-radius: 4px 0 0 4px;\n	        border-radius: 4px 0 0 4px;\n}\n\n.leaflet-draw-actions a {\n	background-color: #919187;\n	border-left: 1px solid #AAA;\n	color: #FFF;\n	font: 11px/19px "Helvetica Neue", Arial, Helvetica, sans-serif;\n	line-height: 28px;\n	text-decoration: none;\n	padding-left: 10px;\n	padding-right: 10px;\n	height: 28px;\n}\n\n.leaflet-draw-actions-bottom {\n	margin-top: 0;\n}\n\n.leaflet-draw-actions-top {\n	margin-top: 1px;\n}\n\n.leaflet-draw-actions-top a,\n.leaflet-draw-actions-bottom a {\n	height: 27px;\n	line-height: 27px;\n}\n\n.leaflet-draw-actions a:hover {\n	background-color: #A0A098;\n}\n\n.leaflet-draw-actions-top.leaflet-draw-actions-bottom a {\n	height: 26px;\n	line-height: 26px;\n}\n\n/* ================================================================== */\n/* Draw toolbar\n/* ================================================================== */\n\n.leaflet-draw-toolbar .leaflet-draw-draw-polyline {\n	background-position: -2px -2px;\n}\n\n.leaflet-draw-toolbar .leaflet-draw-draw-polygon {\n	background-position: -31px -2px;\n}\n\n.leaflet-draw-toolbar .leaflet-draw-draw-rectangle {\n	background-position: -62px -2px;\n}\n\n.leaflet-draw-toolbar .leaflet-draw-draw-circle {\n	background-position: -92px -2px;\n}\n\n.leaflet-draw-toolbar .leaflet-draw-draw-marker {\n	background-position: -122px -2px;\n}\n\n/* ================================================================== */\n/* Edit toolbar\n/* ================================================================== */\n\n.leaflet-draw-toolbar .leaflet-draw-edit-edit {\n	background-position: -152px -2px;\n}\n\n.leaflet-draw-toolbar .leaflet-draw-edit-remove {\n	background-position: -182px -2px;\n}\n\n/* ================================================================== */\n/* Drawing styles\n/* ================================================================== */\n\n.leaflet-mouse-marker {\n	background-color: #fff;\n	cursor: crosshair;\n}\n\n.leaflet-draw-tooltip {\n	background: rgb(54, 54, 54);\n	background: rgba(0, 0, 0, 0.5);\n	border: 1px solid transparent;\n	-webkit-border-radius: 4px;\n	        border-radius: 4px;\n	color: #fff;\n	font: 12px/18px "Helvetica Neue", Arial, Helvetica, sans-serif;\n	margin-left: 20px;\n	margin-top: -21px;\n	padding: 4px 8px;\n	position: absolute;\n	white-space: nowrap;\n	z-index: 6;\n}\n\n.leaflet-draw-tooltip:before {\n	border-right: 6px solid black;\n	border-right-color: rgba(0, 0, 0, 0.5);\n	border-top: 6px solid transparent;\n	border-bottom: 6px solid transparent;\n	content: "";\n	position: absolute;\n	top: 7px;\n	left: -7px;\n}\n\n.leaflet-error-draw-tooltip {\n	background-color: #F2DEDE;\n	border: 1px solid #E6B6BD;\n	color: #B94A48;\n}\n\n.leaflet-error-draw-tooltip:before {\n	border-right-color: #E6B6BD;\n}\n\n.leaflet-draw-tooltip-single {\n	margin-top: -12px\n}\n\n.leaflet-draw-tooltip-subtext {\n	color: #f8d5e4;\n}\n\n.leaflet-draw-guide-dash {\n	font-size: 1%;\n	opacity: 0.6;\n	position: absolute;\n	width: 5px;\n	height: 5px;\n}\n\n/* ================================================================== */\n/* Edit styles\n/* ================================================================== */\n\n.leaflet-edit-marker-selected {\n	background: rgba(254, 87, 161, 0.1);\n	border: 4px dashed rgba(254, 87, 161, 0.6);\n	-webkit-border-radius: 4px;\n	        border-radius: 4px;\n}\n\n.leaflet-edit-move {\n	cursor: move;\n}\n\n.leaflet-edit-resize {\n	cursor: pointer;\n}\n</style>');
   $('head').append('<style>/***\nSpectrum Colorpicker v1.2.0\nhttps://github.com/bgrins/spectrum\nAuthor: Brian Grinstead\nLicense: MIT\n***/\n\n.sp-container {\n    position:absolute;\n    top:0;\n    left:0;\n    display:inline-block;\n    *display: inline;\n    *zoom: 1;\n    /* https://github.com/bgrins/spectrum/issues/40 */\n    z-index: 9999994;\n    overflow: hidden;\n}\n.sp-container.sp-flat {\n    position: relative;\n}\n\n/* http://ansciath.tumblr.com/post/7347495869/css-aspect-ratio */\n.sp-top {\n  position:relative;\n  width: 100%;\n  display:inline-block;\n}\n.sp-top-inner {\n   position:absolute;\n   top:0;\n   left:0;\n   bottom:0;\n   right:0;\n}\n.sp-color {\n    position: absolute;\n    top:0;\n    left:0;\n    bottom:0;\n    right:20%;\n}\n.sp-hue {\n    position: absolute;\n    top:0;\n    right:0;\n    bottom:0;\n    left:84%;\n    height: 100%;\n}\n\n.sp-clear-enabled .sp-hue {\n    top:33px;\n    height: 77.5%;\n}\n\n.sp-fill {\n    padding-top: 80%;\n}\n.sp-sat, .sp-val {\n    position: absolute;\n    top:0;\n    left:0;\n    right:0;\n    bottom:0;\n}\n\n.sp-alpha-enabled .sp-top {\n    margin-bottom: 18px;\n}\n.sp-alpha-enabled .sp-alpha {\n    display: block;\n}\n.sp-alpha-handle {\n    position:absolute;\n    top:-4px;\n    bottom: -4px;\n    width: 6px;\n    left: 50%;\n    cursor: pointer;\n    border: 1px solid black;\n    background: white;\n    opacity: .8;\n}\n.sp-alpha {\n    display: none;\n    position: absolute;\n    bottom: -14px;\n    right: 0;\n    left: 0;\n    height: 8px;\n}\n.sp-alpha-inner {\n    border: solid 1px #333;\n}\n\n.sp-clear {\n    display: none;\n}\n\n.sp-clear.sp-clear-display {\n    background-position: center;\n}\n\n.sp-clear-enabled .sp-clear {\n    display: block;\n    position:absolute;\n    top:0px;\n    right:0;\n    bottom:0;\n    left:84%;\n    height: 28px;\n}\n\n/* Don\'t allow text selection */\n.sp-container, .sp-replacer, .sp-preview, .sp-dragger, .sp-slider, .sp-alpha, .sp-clear, .sp-alpha-handle, .sp-container.sp-dragging .sp-input, .sp-container button  {\n    -webkit-user-select:none;\n    -moz-user-select: -moz-none;\n    -o-user-select:none;\n    user-select: none;\n}\n\n.sp-container.sp-input-disabled .sp-input-container {\n    display: none;\n}\n.sp-container.sp-buttons-disabled .sp-button-container {\n    display: none;\n}\n.sp-palette-only .sp-picker-container {\n    display: none;\n}\n.sp-palette-disabled .sp-palette-container {\n    display: none;\n}\n\n.sp-initial-disabled .sp-initial {\n    display: none;\n}\n\n\n/* Gradients for hue, saturation and value instead of images.  Not pretty... but it works */\n.sp-sat {\n    background-image: -webkit-gradient(linear,  0 0, 100% 0, from(#FFF), to(rgba(204, 154, 129, 0)));\n    background-image: -webkit-linear-gradient(left, #FFF, rgba(204, 154, 129, 0));\n    background-image: -moz-linear-gradient(left, #fff, rgba(204, 154, 129, 0));\n    background-image: -o-linear-gradient(left, #fff, rgba(204, 154, 129, 0));\n    background-image: -ms-linear-gradient(left, #fff, rgba(204, 154, 129, 0));\n    background-image: linear-gradient(to right, #fff, rgba(204, 154, 129, 0));\n    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType = 1, startColorstr=#FFFFFFFF, endColorstr=#00CC9A81)";\n    filter : progid:DXImageTransform.Microsoft.gradient(GradientType = 1, startColorstr=\'#FFFFFFFF\', endColorstr=\'#00CC9A81\');\n}\n.sp-val {\n    background-image: -webkit-gradient(linear, 0 100%, 0 0, from(#000000), to(rgba(204, 154, 129, 0)));\n    background-image: -webkit-linear-gradient(bottom, #000000, rgba(204, 154, 129, 0));\n    background-image: -moz-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));\n    background-image: -o-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));\n    background-image: -ms-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));\n    background-image: linear-gradient(to top, #000, rgba(204, 154, 129, 0));\n    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#00CC9A81, endColorstr=#FF000000)";\n    filter : progid:DXImageTransform.Microsoft.gradient(startColorstr=\'#00CC9A81\', endColorstr=\'#FF000000\');\n}\n\n.sp-hue {\n    background: -moz-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);\n    background: -ms-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);\n    background: -o-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);\n    background: -webkit-gradient(linear, left top, left bottom, from(#ff0000), color-stop(0.17, #ffff00), color-stop(0.33, #00ff00), color-stop(0.5, #00ffff), color-stop(0.67, #0000ff), color-stop(0.83, #ff00ff), to(#ff0000));\n    background: -webkit-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);\n}\n\n/* IE filters do not support multiple color stops.\n   Generate 6 divs, line them up, and do two color gradients for each.\n   Yes, really.\n */\n.sp-1 {\n    height:17%;\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=\'#ff0000\', endColorstr=\'#ffff00\');\n}\n.sp-2 {\n    height:16%;\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=\'#ffff00\', endColorstr=\'#00ff00\');\n}\n.sp-3 {\n    height:17%;\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=\'#00ff00\', endColorstr=\'#00ffff\');\n}\n.sp-4 {\n    height:17%;\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=\'#00ffff\', endColorstr=\'#0000ff\');\n}\n.sp-5 {\n    height:16%;\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=\'#0000ff\', endColorstr=\'#ff00ff\');\n}\n.sp-6 {\n    height:17%;\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=\'#ff00ff\', endColorstr=\'#ff0000\');\n}\n\n.sp-hidden {\n    display: none !important;\n}\n\n/* Clearfix hack */\n.sp-cf:before, .sp-cf:after { content: ""; display: table; }\n.sp-cf:after { clear: both; }\n.sp-cf { *zoom: 1; }\n\n/* Mobile devices, make hue slider bigger so it is easier to slide */\n@media (max-device-width: 480px) {\n    .sp-color { right: 40%; }\n    .sp-hue { left: 63%; }\n    .sp-fill { padding-top: 60%; }\n}\n.sp-dragger {\n   border-radius: 5px;\n   height: 5px;\n   width: 5px;\n   border: 1px solid #fff;\n   background: #000;\n   cursor: pointer;\n   position:absolute;\n   top:0;\n   left: 0;\n}\n.sp-slider {\n    position: absolute;\n    top:0;\n    cursor:pointer;\n    height: 3px;\n    left: -1px;\n    right: -1px;\n    border: 1px solid #000;\n    background: white;\n    opacity: .8;\n}\n\n/*\nTheme authors:\nHere are the basic themeable display options (colors, fonts, global widths).\nSee http://bgrins.github.io/spectrum/themes/ for instructions.\n*/\n\n.sp-container {\n    border-radius: 0;\n    background-color: #ECECEC;\n    border: solid 1px #f0c49B;\n    padding: 0;\n}\n.sp-container, .sp-container button, .sp-container input, .sp-color, .sp-hue, .sp-clear\n{\n    font: normal 12px "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    -ms-box-sizing: border-box;\n    box-sizing: border-box;\n}\n.sp-top\n{\n    margin-bottom: 3px;\n}\n.sp-color, .sp-hue, .sp-clear\n{\n    border: solid 1px #666;\n}\n\n/* Input */\n.sp-input-container {\n    float:right;\n    width: 100px;\n    margin-bottom: 4px;\n}\n.sp-initial-disabled  .sp-input-container {\n    width: 100%;\n}\n.sp-input {\n   font-size: 12px !important;\n   border: 1px inset;\n   padding: 4px 5px;\n   margin: 0;\n   width: 100%;\n   background:transparent;\n   border-radius: 3px;\n   color: #222;\n}\n.sp-input:focus  {\n    border: 1px solid orange;\n}\n.sp-input.sp-validation-error\n{\n    border: 1px solid red;\n    background: #fdd;\n}\n.sp-picker-container , .sp-palette-container\n{\n    float:left;\n    position: relative;\n    padding: 10px;\n    padding-bottom: 300px;\n    margin-bottom: -290px;\n}\n.sp-picker-container\n{\n    width: 172px;\n    border-left: solid 1px #fff;\n}\n\n/* Palettes */\n.sp-palette-container\n{\n    border-right: solid 1px #ccc;\n}\n\n.sp-palette .sp-thumb-el {\n    display: block;\n    position:relative;\n    float:left;\n    width: 24px;\n    height: 15px;\n    margin: 3px;\n    cursor: pointer;\n    border:solid 2px transparent;\n}\n.sp-palette .sp-thumb-el:hover, .sp-palette .sp-thumb-el.sp-thumb-active {\n    border-color: orange;\n}\n.sp-thumb-el\n{\n    position:relative;\n}\n\n/* Initial */\n.sp-initial\n{\n    float: left;\n    border: solid 1px #333;\n}\n.sp-initial span {\n    width: 30px;\n    height: 25px;\n    border:none;\n    display:block;\n    float:left;\n    margin:0;\n}\n\n.sp-initial .sp-clear-display {\n    background-position: center;\n}\n\n/* Buttons */\n.sp-button-container {\n    float: right;\n}\n\n/* Replacer (the little preview div that shows up instead of the <input>) */\n.sp-replacer {\n    margin:0;\n    overflow:hidden;\n    cursor:pointer;\n    padding: 4px;\n    display:inline-block;\n    *zoom: 1;\n    *display: inline;\n    border: solid 1px #91765d;\n    background: #eee;\n    color: #333;\n    vertical-align: middle;\n}\n.sp-replacer:hover, .sp-replacer.sp-active {\n    border-color: #F0C49B;\n    color: #111;\n}\n.sp-replacer.sp-disabled {\n    cursor:default;\n    border-color: silver;\n    color: silver;\n}\n.sp-dd {\n    padding: 2px 0;\n    height: 16px;\n    line-height: 16px;\n    float:left;\n    font-size:10px;\n}\n.sp-preview\n{\n    position:relative;\n    width:25px;\n    height: 20px;\n    border: solid 1px #222;\n    margin-right: 5px;\n    float:left;\n    z-index: 0;\n}\n\n.sp-palette\n{\n    *width: 220px;\n    max-width: 220px;\n}\n.sp-palette .sp-thumb-el\n{\n    width:16px;\n    height: 16px;\n    margin:2px 1px;\n    border: solid 1px #d0d0d0;\n}\n\n.sp-container\n{\n    padding-bottom:0;\n}\n\n\n/* Buttons: http://hellohappy.org/css3-buttons/ */\n.sp-container button {\n  background-color: #eeeeee;\n  background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);\n  background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);\n  background-image: -ms-linear-gradient(top, #eeeeee, #cccccc);\n  background-image: -o-linear-gradient(top, #eeeeee, #cccccc);\n  background-image: linear-gradient(to bottom, #eeeeee, #cccccc);\n  border: 1px solid #ccc;\n  border-bottom: 1px solid #bbb;\n  border-radius: 3px;\n  color: #333;\n  font-size: 14px;\n  line-height: 1;\n  padding: 5px 4px;\n  text-align: center;\n  text-shadow: 0 1px 0 #eee;\n  vertical-align: middle;\n}\n.sp-container button:hover {\n    background-color: #dddddd;\n    background-image: -webkit-linear-gradient(top, #dddddd, #bbbbbb);\n    background-image: -moz-linear-gradient(top, #dddddd, #bbbbbb);\n    background-image: -ms-linear-gradient(top, #dddddd, #bbbbbb);\n    background-image: -o-linear-gradient(top, #dddddd, #bbbbbb);\n    background-image: linear-gradient(to bottom, #dddddd, #bbbbbb);\n    border: 1px solid #bbb;\n    border-bottom: 1px solid #999;\n    cursor: pointer;\n    text-shadow: 0 1px 0 #ddd;\n}\n.sp-container button:active {\n    border: 1px solid #aaa;\n    border-bottom: 1px solid #888;\n    -webkit-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;\n    -moz-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;\n    -ms-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;\n    -o-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;\n    box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;\n}\n.sp-cancel\n{\n    font-size: 11px;\n    color: #d93f3f !important;\n    margin:0;\n    padding:2px;\n    margin-right: 5px;\n    vertical-align: middle;\n    text-decoration:none;\n\n}\n.sp-cancel:hover\n{\n    color: #d93f3f !important;\n    text-decoration: underline;\n}\n\n\n.sp-palette span:hover, .sp-palette span.sp-thumb-active\n{\n    border-color: #000;\n}\n\n.sp-preview, .sp-alpha, .sp-thumb-el\n{\n    position:relative;\n    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAAGUlEQVQYV2M4gwH+YwCGIasIUwhT25BVBADtzYNYrHvv4gAAAABJRU5ErkJggg==);\n}\n.sp-preview-inner, .sp-alpha-inner, .sp-thumb-inner\n{\n    display:block;\n    position:absolute;\n    top:0;left:0;bottom:0;right:0;\n}\n\n.sp-palette .sp-thumb-inner\n{\n    background-position: 50% 50%;\n    background-repeat: no-repeat;\n}\n\n.sp-palette .sp-thumb-light.sp-thumb-active .sp-thumb-inner\n{\n    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAIVJREFUeNpiYBhsgJFMffxAXABlN5JruT4Q3wfi/0DsT64h8UD8HmpIPCWG/KemIfOJCUB+Aoacx6EGBZyHBqI+WsDCwuQ9mhxeg2A210Ntfo8klk9sOMijaURm7yc1UP2RNCMbKE9ODK1HM6iegYLkfx8pligC9lCD7KmRof0ZhjQACDAAceovrtpVBRkAAAAASUVORK5CYII=);\n}\n\n.sp-palette .sp-thumb-dark.sp-thumb-active .sp-thumb-inner\n{\n    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAMdJREFUOE+tkgsNwzAMRMugEAahEAahEAZhEAqlEAZhEAohEAYh81X2dIm8fKpEspLGvudPOsUYpxE2BIJCroJmEW9qJ+MKaBFhEMNabSy9oIcIPwrB+afvAUFoK4H0tMaQ3XtlrggDhOVVMuT4E5MMG0FBbCEYzjYT7OxLEvIHQLY2zWwQ3D+9luyOQTfKDiFD3iUIfPk8VqrKjgAiSfGFPecrg6HN6m/iBcwiDAo7WiBeawa+Kwh7tZoSCGLMqwlSAzVDhoK+6vH4G0P5wdkAAAAASUVORK5CYII=);\n}\n\n.sp-clear-display {\n    background-repeat:no-repeat;\n    background-position: center;\n    background-image: url(data:image/gif;base64,R0lGODlhFAAUAPcAAAAAAJmZmZ2dnZ6enqKioqOjo6SkpKWlpaampqenp6ioqKmpqaqqqqurq/Hx8fLy8vT09PX19ff39/j4+Pn5+fr6+vv7+wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAP8ALAAAAAAUABQAAAihAP9FoPCvoMGDBy08+EdhQAIJCCMybCDAAYUEARBAlFiQQoMABQhKUJBxY0SPICEYHBnggEmDKAuoPMjS5cGYMxHW3IiT478JJA8M/CjTZ0GgLRekNGpwAsYABHIypcAgQMsITDtWJYBR6NSqMico9cqR6tKfY7GeBCuVwlipDNmefAtTrkSzB1RaIAoXodsABiZAEFB06gIBWC1mLVgBa0AAOw==);\n}\n</style>');
 }
 
@@ -7215,7 +5134,7 @@ window.plugin.drawTools.optCopy = function() {
           stockLinks.push([latLngs[latLngs.length-1].lat,latLngs[latLngs.length-1].lng,latLngs[0].lat,latLngs[0].lng]);
         }
       });
-      var stockUrl = 'https://www.ingress.com/intel?ll='+map.getCenter().lat+','+map.getCenter().lng+'&z='+map.getZoom()+'&pls='+stockLinks.map(function(link){return link.join(',');}).join('_');
+      var stockUrl = 'https://intel.ingress.com/intel?ll='+map.getCenter().lat+','+map.getCenter().lng+'&z='+map.getZoom()+'&pls='+stockLinks.map(function(link){return link.join(',');}).join('_');
       var stockWarnTexts = [];
       if (stockWarnings.polyAsLine) stockWarnTexts.push('Note: polygons are exported as lines');
       if (stockLinks.length>40) stockWarnTexts.push('Warning: Stock intel may not work with more than 40 line segments - there are '+stockLinks.length);

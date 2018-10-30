@@ -1,12 +1,12 @@
 // ==UserScript==
 // @id             iitc-plugin-scoreboard@vita10gy
 // @name           IITC plugin: show a localized scoreboard.
-// @version        0.2.0.20180421.92633
+// @version        0.2.0.20181030.115356
 // @category       Info
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2018-04-21-092633] Display a scoreboard about all visible portals with statistics about both teams,like average portal level,link & field counts etc.
+// @description    [local-2018-10-30-115356] Display a scoreboard about all visible portals with statistics about both teams,like average portal level,link & field counts etc.
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
@@ -27,7 +27,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'local';
-plugin_info.dateTimeVersion = '20180421.92633';
+plugin_info.dateTimeVersion = '20181030.115356';
 plugin_info.pluginId = 'scoreboard';
 //END PLUGIN AUTHORS NOTE
 

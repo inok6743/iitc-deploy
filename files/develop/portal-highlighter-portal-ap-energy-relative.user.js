@@ -2,7 +2,7 @@
 // @id             iitc-plugin-highlight-portals-by-ap-by-energy-relative@vita10gy
 // @name           IITC plugin: highlight portals by ap/energy (relative)
 // @category  Deleted
-// @version        0.1.1.20180421.92633
+// @version        0.1.1.20181030.115356
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none

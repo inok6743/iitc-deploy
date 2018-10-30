@@ -2,11 +2,11 @@
 // @id             iitc-plugin-fix-googlemap-china-offset@breezewish
 // @name           IITC plugin: Fix Google Map offsets in China
 // @category       Tweaks
-// @version        0.0.1.20180421.92633
+// @version        0.0.1.20181030.115356
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2018-04-21-092633] Show correct Google Map for China user by applying offset tweaks.
+// @description    [local-2018-10-30-115356] Show correct Google Map for China user by applying offset tweaks.
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
@@ -26,7 +26,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'local';
-plugin_info.dateTimeVersion = '20180421.92633';
+plugin_info.dateTimeVersion = '20181030.115356';
 plugin_info.pluginId = 'fix-googlemap-china-offset';
 //END PLUGIN AUTHORS NOTE
 
@@ -205,7 +205,7 @@ window.plugin.fixChinaOffset.overwrite = function(dest, src) {
 
 var setup = function() {
 
-  window.plugin.fixChinaOffset.overwrite(L.gridLayer.googleMutant.prototype, window.plugin.fixChinaOffset.L.Google);
+  window.plugin.fixChinaOffset.overwrite(L.Google.prototype, window.plugin.fixChinaOffset.L.Google);
 
 }
 
