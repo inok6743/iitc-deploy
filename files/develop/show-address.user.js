@@ -2,11 +2,11 @@
 // @id             iitc-plugin-show-address@vita10gy
 // @name           IITC plugin: show portal address in sidebar
 // @category       Deleted
-// @version        0.3.0.20181030.115356
+// @version        0.3.0.20181030.124949
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2018-10-30-115356] Address no longer available, as of Niantic changes 2014-05-23
+// @description    [local-2018-10-30-124949] Address no longer available, as of Niantic changes 2014-05-23
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*

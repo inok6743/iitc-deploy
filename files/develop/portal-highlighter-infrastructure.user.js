@@ -2,11 +2,11 @@
 // @id             iitc-plugin-highlight-portal-infrastructure@vita10gy
 // @name           IITC plugin: highlight portals with infrastructure problems
 // @category       Highlighter
-// @version        0.2.1.20181030.115356
+// @version        0.2.1.20181030.124949
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2018-10-30-115356] Use the portal fill color to denote if the portal has any infrastructure problems. Red: no picture. Yellow: potential title issue. Orange:  both of these.
+// @description    [local-2018-10-30-124949] Use the portal fill color to denote if the portal has any infrastructure problems. Red: no picture. Yellow: potential title issue. Orange:  both of these.
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
@@ -26,7 +26,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'local';
-plugin_info.dateTimeVersion = '20181030.115356';
+plugin_info.dateTimeVersion = '20181030.124949';
 plugin_info.pluginId = 'portal-highlighter-infrastructure';
 //END PLUGIN AUTHORS NOTE
 

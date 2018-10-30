@@ -1,11 +1,11 @@
 // ==UserScript==
 // @id             iitc-plugin-speech-search
 // @name           IITC Plugin: Speech Search
-// @version        0.0.1.20181030.115356
+// @version        0.0.1.20181030.124949
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2018-10-30-115356] Allow speech input for location search (webkit only for now - NOT Firefox).
+// @description    [local-2018-10-30-124949] Allow speech input for location search (webkit only for now - NOT Firefox).
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
@@ -25,7 +25,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'local';
-plugin_info.dateTimeVersion = '20181030.115356';
+plugin_info.dateTimeVersion = '20181030.124949';
 plugin_info.pluginId = 'speech-search';
 //END PLUGIN AUTHORS NOTE
 
