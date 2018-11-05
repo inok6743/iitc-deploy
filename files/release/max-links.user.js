@@ -2,10 +2,10 @@
 // @id             max-links@boombuler
 // @name           IITC plugin: Max Links
 // @category       Layer
-// @version        0.4.3.20181030.135241
+// @version        0.4.3.20181105.101009
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2018-10-30-135241] Calculate how to link the portals to create a reasonably tidy set of links/fields. Enable from the layer chooser. (Max Links is a poor name, but remains for historical reasons.)
+// @description    [local-2018-11-05-101009] Calculate how to link the portals to create a reasonably tidy set of links/fields. Enable from the layer chooser. (Max Links is a poor name, but remains for historical reasons.)
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
@@ -25,7 +25,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'local';
-plugin_info.dateTimeVersion = '20181030.135241';
+plugin_info.dateTimeVersion = '20181105.101009';
 plugin_info.pluginId = 'max-links';
 //END PLUGIN AUTHORS NOTE
 
